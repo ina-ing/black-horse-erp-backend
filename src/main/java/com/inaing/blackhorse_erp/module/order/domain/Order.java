@@ -1,0 +1,107 @@
+package com.inaing.blackhorse_erp.module.order.domain;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.annotations.SQLRestriction;
+
+import com.inaing.blackhorse_erp.common.domain.BaseEntity;
+import com.inaing.blackhorse_erp.module.employee.domain.Employee;
+import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
+import com.inaing.blackhorse_erp.module.retailer.domain.Retailer;
+import com.inaing.blackhorse_erp.module.role.domain.Role;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "orders")
+@SQLRestriction("deleted = false")
+@Getter
+@Setter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+public class Order extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", nullable = false, unique = true)
+    private String id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "retailer_id", nullable = false)
+    private Retailer retailer;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "handled_by", nullable = false)
+    private Employee handledBy;
+
+    @Column(name = "code", nullable = false, unique = true)
+    private String code;
+
+    @Column(name = "total_quantity", nullable = false)
+    @Builder.Default
+    private Integer totalQuantity = 0;
+
+    @Column(name = "total_articles", nullable = false)
+    @Builder.Default
+    private Integer totalArticles = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    @Builder.Default
+    private OrderStatus status = OrderStatus.PENDING;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "created_by_role", nullable = false, updatable = false)
+    private Role createdByRole;
+
+    @Column(name = "order_date", nullable = false)
+    @Builder.Default
+    private LocalDate orderDate = LocalDate.now();
+
+    @Column(name = "note", columnDefinition = "TEXT", nullable = true)
+    private String note;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<OrderItem> items = new ArrayList<>();
+
+    public void addItem(OrderItem item) {
+        items.add(item);
+        item.setOrder(this);
+    }
+
+    public void removeItem(OrderItem item) {
+        items.remove(item);
+        item.setOrder(null);
+    }
+
+    public void recalculateTotals() {
+        this.totalArticles = (int) items.stream()
+                .filter(i -> i.getQuantity() > 0)
+                .count();
+        this.totalQuantity = items.stream()
+                .mapToInt(OrderItem::getQuantity)
+                .sum();
+    }
+}
