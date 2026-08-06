@@ -1,6 +1,6 @@
 package com.inaing.blackhorse_erp.module.order.service.impl;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -25,7 +25,8 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     @Transactional
     public Order create(Order order) {
-        order.setOrderDate(LocalDate.now());
+        order.setCode(this.generateOrderCode());
+        order.setOrderDate(Instant.now());
         return orderRepository.save(order);
     }
 

@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
 import com.inaing.blackhorse_erp.exception.exceptions.BusinessRuleException;
 import com.inaing.blackhorse_erp.module.order.domain.Order;
 import com.inaing.blackhorse_erp.module.order.domain.OrderItem;
-import com.inaing.blackhorse_erp.module.order.domain.enums.OrderHistoryTrigger;
 import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderFulfillmentRequestDto;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderItemRequestDto;
@@ -100,7 +100,7 @@ public class FulfillOrderUsecase {
 
                 Order updated = orderService.update(order);
                 orderStatusHistoryService.record(updated, updated.getStatus(),
-                                OrderHistoryTrigger.FULFILLMENT, actor);
+                                ActionTrigger.FULFILLMENT, actor);
 
                 return orderMapper.toResponse(updated);
         }

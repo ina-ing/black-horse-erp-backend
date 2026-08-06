@@ -60,7 +60,7 @@ public class OrderController {
         return ApiResponse.ok(orderUsecases.fulfill(id, request));
     }
 
-    @PutMapping("status/{id}")
+    @PutMapping("/status/{id}")
     public ApiResponse<OrderResponseDto> updateStatus(@PathVariable String id,
             @RequestBody OrderStatusUpdateRequestDto request) {
         return ApiResponse.ok(orderUsecases.updateStatus(id, request));

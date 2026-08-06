@@ -1,6 +1,6 @@
 package com.inaing.blackhorse_erp.module.order.domain;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +47,9 @@ public class Order extends BaseEntity {
     @Column(name = "id", nullable = false, unique = true)
     private String id;
 
+    @Column(name = "code", nullable = false, unique = true)
+    private String code;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "retailer_id", nullable = false)
     private Retailer retailer;
@@ -54,9 +57,6 @@ public class Order extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "handled_by", nullable = false)
     private Employee handledBy;
-
-    @Column(name = "code", nullable = false, unique = true)
-    private String code;
 
     @Column(name = "total_quantity", nullable = false)
     @Builder.Default
@@ -68,8 +68,7 @@ public class Order extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    @Builder.Default
-    private OrderStatus status = OrderStatus.PENDING;
+    private OrderStatus status;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "created_by_role", nullable = false, updatable = false)
@@ -77,7 +76,7 @@ public class Order extends BaseEntity {
 
     @Column(name = "order_date", nullable = false)
     @Builder.Default
-    private LocalDate orderDate = LocalDate.now();
+    private Instant orderDate = Instant.now();
 
     @Column(name = "note", columnDefinition = "TEXT", nullable = true)
     private String note;
@@ -101,7 +100,7 @@ public class Order extends BaseEntity {
                 .filter(i -> i.getQuantity() > 0)
                 .count();
         this.totalQuantity = items.stream()
-                .mapToInt(OrderItem::getQuantity)
+                .mapToInt(item -> item.getQuantity())
                 .sum();
     }
 }

@@ -1,6 +1,6 @@
 package com.inaing.blackhorse_erp.module.order.dto.response;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 
 import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
@@ -11,7 +11,7 @@ public record OrderWithStatusHistoryResponseDto(
         String retailer,
         String handledBy,
         OrderStatus status,
-        LocalDate orderDate,
+        Instant orderDate,
         Integer totalArticles,
         Integer totalQuantity,
         String note,

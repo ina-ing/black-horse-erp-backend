@@ -25,9 +25,11 @@ public interface OrderMapper {
     OrderWithStatusHistoryResponseDto toResponseWithHistory(Order order,
             List<OrderStatusHistoryResponseDto> statusHistory);
 
-    @Mapping(target = "variantSizeId", source = "variantSize.id")
     @Mapping(target = "sku", source = "variantSize.sku")
     @Mapping(target = "size", source = "variantSize.size")
+    @Mapping(target = "variantSizeId", source = "variantSize.id")
+    @Mapping(target = "color", source = "variantSize.productVariant.color")
+    @Mapping(target = "articleName", source = "variantSize.productVariant.product.name")
     OrderItemsResponseDto toItemResponse(OrderItem item);
 
     OrderStatusHistoryResponseDto toHistoryResponse(OrderStatusHistory history);

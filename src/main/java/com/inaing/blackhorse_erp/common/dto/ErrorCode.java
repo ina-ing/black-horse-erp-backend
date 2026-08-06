@@ -24,6 +24,9 @@ public enum ErrorCode {
     ROLE_NOT_FOUND(404, "Role not found"),
     ORDER_NOT_FOUND(404, "Order not found"),
 
+    ORDER_UPDATE_DENIED(403, "Access denied. You are not authorized to update this order."),
+    RETURN_UPDATE_DENIED(403, "Access denied. You are not authorized to update this return."),
+
     DUPLICATE_PHONE(409, "Phone number already registered"),
     DUPLICATE_EMAIL(409, "Email already registered"),
     DUPLICATE_RESOURCE(409, "Resource already exists"),
