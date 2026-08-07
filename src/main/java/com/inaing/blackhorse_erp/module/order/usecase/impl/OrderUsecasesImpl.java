@@ -13,8 +13,8 @@ import com.inaing.blackhorse_erp.module.order.dto.response.OrderWithStatusHistor
 import com.inaing.blackhorse_erp.module.order.usecase.IOrderUsecases;
 import com.inaing.blackhorse_erp.module.order.usecase.impl.usecases.CreateOrderUsecase;
 import com.inaing.blackhorse_erp.module.order.usecase.impl.usecases.FulfillOrderUsecase;
-import com.inaing.blackhorse_erp.module.order.usecase.impl.usecases.GetOrderIdentifierUsecase;
-import com.inaing.blackhorse_erp.module.order.usecase.impl.usecases.GetOrdersUsecase;
+import com.inaing.blackhorse_erp.module.order.usecase.impl.usecases.GetOrderUsecase;
+import com.inaing.blackhorse_erp.module.order.usecase.impl.usecases.GetAllOrdersUsecase;
 import com.inaing.blackhorse_erp.module.order.usecase.impl.usecases.UpdateOrderStatusUsecase;
 import com.inaing.blackhorse_erp.module.order.usecase.impl.usecases.UpdateOrderUsecase;
 
@@ -25,8 +25,8 @@ import lombok.RequiredArgsConstructor;
 public class OrderUsecasesImpl implements IOrderUsecases {
 
     private final CreateOrderUsecase createOrderUsecase;
-    private final GetOrderIdentifierUsecase getOrderIdentifierUsecase;
-    private final GetOrdersUsecase getOrdersUsecase;
+    private final GetOrderUsecase getOrderUsecase;
+    private final GetAllOrdersUsecase getAllOrdersUsecase;
     private final UpdateOrderUsecase updateOrderUsecase;
     private final FulfillOrderUsecase fulfillOrderUsecase;
     private final UpdateOrderStatusUsecase updateOrderStatusUsecase;
@@ -38,12 +38,12 @@ public class OrderUsecasesImpl implements IOrderUsecases {
 
     @Override
     public OrderWithStatusHistoryResponseDto getByIdentifier(String code) {
-        return getOrderIdentifierUsecase.execute(code);
+        return getOrderUsecase.execute(code);
     }
 
     @Override
     public List<OrderResponseDto> getAll() {
-        return getOrdersUsecase.execute();
+        return getAllOrdersUsecase.execute();
     }
 
     @Override

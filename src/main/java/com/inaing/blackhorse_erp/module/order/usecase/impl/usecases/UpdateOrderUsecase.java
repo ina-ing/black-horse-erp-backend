@@ -54,29 +54,24 @@ public class UpdateOrderUsecase {
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         Role role = Role.fromName(editor.role());
+
         List<OrderItemRequestDto> items = dedupeItems(request.items());
 
         switch (role) {
             case RETAILER -> {
                 if (!order.getRetailer().getId().equals(editor.id())) {
-                    throw new BusinessRuleException(
-                            "ORDER_UPDATE_DENIED",
-                            "You can only update your own orders.");
+                    throw new AppException(ErrorCode.ORDER_UPDATE_DENIED);
                 }
                 updateItems(order, items, true);
             }
             case SALES -> {
                 if (!order.getHandledBy().getId().equals(editor.id())) {
-                    throw new BusinessRuleException(
-                            "ORDER_UPDATE_DENIED",
-                            "You are not allowed to update this order.");
+                    throw new AppException(ErrorCode.ORDER_UPDATE_DENIED);
                 }
                 updateItems(order, items, false);
             }
             case ADMIN -> updateItems(order, items, false);
-            default -> throw new BusinessRuleException(
-                    "ORDER_UPDATE_DENIED",
-                    "You are not allowed to update this order.");
+            default -> throw new AppException(ErrorCode.ORDER_UPDATE_DENIED);
         }
 
         if (request.note() != null) {
@@ -89,9 +84,14 @@ public class UpdateOrderUsecase {
 
     private List<OrderItemRequestDto> dedupeItems(List<OrderItemRequestDto> items) {
         Map<String, Integer> merged = new LinkedHashMap<>();
+
         for (OrderItemRequestDto item : items) {
-            merged.merge(item.variantSizeId(), item.quantity(), Integer::sum);
+            merged.merge(
+                    item.variantSizeId(),
+                    item.quantity(),
+                    (existing, incoming) -> existing + incoming);
         }
+
         return merged.entrySet()
                 .stream()
                 .map(entry -> new OrderItemRequestDto(entry.getKey(), entry.getValue()))

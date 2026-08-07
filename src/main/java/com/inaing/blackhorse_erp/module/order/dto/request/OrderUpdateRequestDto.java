@@ -8,5 +8,4 @@ import jakarta.validation.constraints.NotEmpty;
 public record OrderUpdateRequestDto(
         String note,
         @NotEmpty @Valid List<OrderItemRequestDto> items) {
-
 }

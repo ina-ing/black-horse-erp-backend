@@ -3,7 +3,7 @@ package com.inaing.blackhorse_erp.module.order.domain;
 import org.hibernate.annotations.SQLRestriction;
 
 import com.inaing.blackhorse_erp.common.domain.BaseEntity;
-import com.inaing.blackhorse_erp.module.order.domain.enums.OrderHistoryTrigger;
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
 import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
 
 import jakarta.persistence.Column;
@@ -41,15 +41,15 @@ public class OrderStatusHistory extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
+    private Order order; 
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "to_status", nullable = false)
+    @Column(name = "status", nullable = false)
     private OrderStatus status;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "trigger_type", nullable = false)
-    private OrderHistoryTrigger trigger;
+    private ActionTrigger trigger;
 
     @Column(name = "actor_name", nullable = false)
     private String actorName;

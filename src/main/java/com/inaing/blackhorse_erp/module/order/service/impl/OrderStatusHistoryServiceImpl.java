@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
 import com.inaing.blackhorse_erp.module.order.domain.Order;
 import com.inaing.blackhorse_erp.module.order.domain.OrderStatusHistory;
-import com.inaing.blackhorse_erp.module.order.domain.enums.OrderHistoryTrigger;
 import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
 import com.inaing.blackhorse_erp.module.order.repository.OrderStatusHistoryRepository;
 import com.inaing.blackhorse_erp.module.order.service.IOrderStatusHistoryService;
@@ -23,7 +23,7 @@ public class OrderStatusHistoryServiceImpl implements IOrderStatusHistoryService
 
     @Override
     @Transactional
-    public void record(Order order, OrderStatus status, OrderHistoryTrigger trigger,
+    public void record(Order order, OrderStatus status, ActionTrigger trigger,
             AuthPrincipal actor) {
 
         OrderStatusHistory history = OrderStatusHistory.builder()

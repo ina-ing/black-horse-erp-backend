@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class GetOrderIdentifierUsecase {
+public class GetOrderUsecase {
 
     private final OrderMapper orderMapper;
     private final IOrderService orderService;

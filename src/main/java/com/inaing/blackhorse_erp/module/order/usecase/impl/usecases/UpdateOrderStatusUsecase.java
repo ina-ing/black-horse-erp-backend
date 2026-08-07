@@ -3,11 +3,11 @@ package com.inaing.blackhorse_erp.module.order.usecase.impl.usecases;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
 import com.inaing.blackhorse_erp.exception.exceptions.BusinessRuleException;
 import com.inaing.blackhorse_erp.module.order.domain.Order;
-import com.inaing.blackhorse_erp.module.order.domain.enums.OrderHistoryTrigger;
 import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderStatusUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.order.dto.response.OrderResponseDto;
@@ -84,7 +84,7 @@ public class UpdateOrderStatusUsecase {
 
         order.setStatus(OrderStatus.APPROVED);
 
-        orderStatusHistoryService.record(order, OrderStatus.APPROVED, OrderHistoryTrigger.MANUAL,
+        orderStatusHistoryService.record(order, OrderStatus.APPROVED, ActionTrigger.MANUAL,
                 actor);
     }
 
@@ -105,17 +105,33 @@ public class UpdateOrderStatusUsecase {
         order.setStatus(OrderStatus.PROCESSING);
 
         orderStatusHistoryService.record(order, OrderStatus.PROCESSING,
-                OrderHistoryTrigger.MANUAL, actor);
+                ActionTrigger.MANUAL, actor);
     }
 
     private void cancel(Order order, Role role, AuthPrincipal actor) {
 
-        if (role != Role.RETAILER
-                && role != Role.SALES
-                && role != Role.ADMIN) {
-            throw new BusinessRuleException(
-                    "ORDER_CANCEL_DENIED",
-                    "You are not allowed to cancel orders.");
+        if (role != Role.ADMIN) {
+            switch (role) {
+                case RETAILER -> {
+                    if (!order.getRetailer().getId().equals(actor.id())) {
+                        throw new BusinessRuleException(
+                                "ORDER_CANCEL_DENIED",
+                                "You can only cancel your own orders.");
+                    }
+                }
+
+                case SALES -> {
+                    if (order.getHandledBy() == null
+                            || !order.getHandledBy().getId().equals(actor.id())) {
+                        throw new BusinessRuleException(
+                                "ORDER_CANCEL_DENIED",
+                                "You are not allowed to cancel this order.");
+                    }
+                }
+                default -> throw new BusinessRuleException(
+                        "ORDER_CANCEL_DENIED",
+                        "You are not allowed to cancel orders.");
+            }
         }
 
         if (order.getStatus() != OrderStatus.PENDING
@@ -125,25 +141,7 @@ public class UpdateOrderStatusUsecase {
                     "Only pending or approved orders can be cancelled.");
         }
 
-        if (role == Role.RETAILER
-                && !order.getRetailer().getId().equals(actor.id())) {
-            throw new BusinessRuleException(
-                    "ORDER_CANCEL_DENIED",
-                    "You can only cancel your own orders.");
-        }
-
-        if (role == Role.SALES) {
-            if (order.getHandledBy() == null
-                    || !order.getHandledBy().getId().equals(actor.id())) {
-                throw new BusinessRuleException(
-                        "ORDER_CANCEL_DENIED",
-                        "You are not allowed to cancel this order.");
-            }
-        }
-
         order.setStatus(OrderStatus.CANCELLED);
-
-        orderStatusHistoryService.record(order, OrderStatus.CANCELLED,
-                OrderHistoryTrigger.CANCELLATION, actor);
+        orderStatusHistoryService.record(order, OrderStatus.CANCELLED, ActionTrigger.CANCELLATION, actor);
     }
 }

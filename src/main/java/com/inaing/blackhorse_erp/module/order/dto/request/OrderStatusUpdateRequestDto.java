@@ -7,5 +7,4 @@ import jakarta.validation.constraints.NotNull;
 public record OrderStatusUpdateRequestDto(
 
         @NotNull OrderStatus status) {
-
 }
