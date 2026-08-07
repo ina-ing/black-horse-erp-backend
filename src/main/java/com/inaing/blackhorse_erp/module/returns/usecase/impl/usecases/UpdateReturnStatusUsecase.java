@@ -7,7 +7,6 @@ import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
 import com.inaing.blackhorse_erp.exception.exceptions.BusinessRuleException;
-import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
 import com.inaing.blackhorse_erp.module.returns.domain.Return;
 import com.inaing.blackhorse_erp.module.returns.domain.enums.ReturnStatus;
 import com.inaing.blackhorse_erp.module.returns.dto.request.ReturnStatusUpdateRequestDto;
@@ -38,16 +37,17 @@ public class UpdateReturnStatusUsecase {
             throw new AppException(ErrorCode.NOT_FOUND, "Return not found" + id);
         }
 
-        AuthPrincipal actor = currentUserProvider.currentPrincipal()
+        AuthPrincipal principal = currentUserProvider.currentPrincipal()
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        Role role = Role.fromName(actor.role());
+        Role role = Role.fromName(principal.role());
 
         switch (request.status()) {
-            case APPROVED -> approve(ret, role, actor);
-            case CANCELLED -> cancel(ret, role, actor);
-            case PROCESSING -> startProcessing(ret, role, actor);
-            case DISPATCHED -> dispatch(ret, role, actor);
+            case APPROVED -> approve(ret, role, principal);
+            case CANCELLED -> cancel(ret, role, principal);
+            case PROCESSING -> startProcessing(ret, role, principal);
+            case DISPATCHED -> dispatch(ret, role, principal);
+            case COMPLETED -> complete(ret, role, principal);
             default -> throw new BusinessRuleException(
                     "INVALID_STATUS_TRANSITION",
                     "This status cannot be set manually.");
@@ -55,11 +55,11 @@ public class UpdateReturnStatusUsecase {
         return returnMapper.toResponse(returnService.update(ret));
     }
 
-    private void approve(Return ret, Role role, AuthPrincipal actor) {
+    private void approve(Return ret, Role role, AuthPrincipal principal) {
         if (role != Role.ADMIN) {
             if (role != Role.SALES
                     || ret.getHandledBy() == null
-                    || !actor.id().equals(ret.getHandledBy().getId())) {
+                    || !principal.id().equals(ret.getHandledBy().getId())) {
                 throw new AppException(ErrorCode.RETURN_UPDATE_DENIED);
             }
         }
@@ -79,10 +79,10 @@ public class UpdateReturnStatusUsecase {
         }
 
         ret.setStatus(ReturnStatus.APPROVED);
-        returnStatusHistoryService.record(ret, ReturnStatus.APPROVED, ActionTrigger.MANUAL, actor);
+        returnStatusHistoryService.record(ret, ReturnStatus.APPROVED, ActionTrigger.MANUAL, principal);
     }
 
-    private void startProcessing(Return ret, Role role, AuthPrincipal actor) {
+    private void startProcessing(Return ret, Role role, AuthPrincipal principal) {
 
         if (role != Role.FACTORY) {
             throw new BusinessRuleException(
@@ -96,10 +96,10 @@ public class UpdateReturnStatusUsecase {
         }
 
         ret.setStatus(ReturnStatus.PROCESSING);
-        returnStatusHistoryService.record(ret, ReturnStatus.PROCESSING, ActionTrigger.MANUAL, actor);
+        returnStatusHistoryService.record(ret, ReturnStatus.PROCESSING, ActionTrigger.MANUAL, principal);
     }
 
-    private void dispatch(Return ret, Role role, AuthPrincipal actor) {
+    private void dispatch(Return ret, Role role, AuthPrincipal principal) {
         if (role != Role.FACTORY) {
             throw new BusinessRuleException(
                     "RETURN_DISPATCH_DENIED",
@@ -112,35 +112,35 @@ public class UpdateReturnStatusUsecase {
         }
 
         ret.setStatus(ReturnStatus.DISPATCHED);
-        returnStatusHistoryService.record(ret, ReturnStatus.DISPATCHED, ActionTrigger.MANUAL, actor);
+        returnStatusHistoryService.record(ret, ReturnStatus.DISPATCHED, ActionTrigger.MANUAL, principal);
     }
 
-    private void complete(Return ret, Role role, AuthPrincipal actor) {
+    private void complete(Return ret, Role role, AuthPrincipal principal) {
 
         if (role != Role.RETAILER
-                || !ret.getRetailer().getId().equals(actor.id())) {
+                || !ret.getRetailer().getId().equals(principal.id())) {
             throw new BusinessRuleException(
                     "RETURN_NOT_ACCEPTABLE",
                     "You are not allowed to accept this return.");
         }
 
         ret.setStatus(ReturnStatus.COMPLETED);
-        returnStatusHistoryService.record(ret, ReturnStatus.COMPLETED, ActionTrigger.FULFILLMENT, actor);
+        returnStatusHistoryService.record(ret, ReturnStatus.COMPLETED, ActionTrigger.FULFILLMENT, principal);
     }
 
-    private void cancel(Return ret, Role role, AuthPrincipal actor) {
+    private void cancel(Return ret, Role role, AuthPrincipal principal) {
 
         if (role != Role.ADMIN) {
             switch (role) {
                 case RETAILER -> {
-                    if (!ret.getRetailer().getId().equals(actor.id())) {
+                    if (!ret.getRetailer().getId().equals(principal.id())) {
                         throw new BusinessRuleException(
                                 "RETURN_CANCEL_DENIED",
                                 "You can only cancel your own returns.");
                     }
                 }
                 case SALES -> {
-                    if (ret.getHandledBy().getId().equals(actor.id())) {
+                    if (ret.getHandledBy().getId().equals(principal.id())) {
                         throw new BusinessRuleException(
                                 "RETURN_CANCEL_DENIED",
                                 "You not allowed to cancel this return");
@@ -159,6 +159,6 @@ public class UpdateReturnStatusUsecase {
         }
 
         ret.setStatus(ReturnStatus.CANCELLED);
-        returnStatusHistoryService.record(ret, ReturnStatus.CANCELLED, ActionTrigger.CANCELLATION, actor);
+        returnStatusHistoryService.record(ret, ReturnStatus.CANCELLED, ActionTrigger.CANCELLATION, principal);
     }
 }

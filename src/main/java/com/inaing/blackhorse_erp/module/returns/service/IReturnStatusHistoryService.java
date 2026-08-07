@@ -10,7 +10,7 @@ import com.inaing.blackhorse_erp.security.context.AuthPrincipal;
 
 public interface IReturnStatusHistoryService {
 
-    void record(Return ret, ReturnStatus status, ActionTrigger trigger, AuthPrincipal actor);
+    void record(Return ret, ReturnStatus status, ActionTrigger trigger, AuthPrincipal principal);
 
     List<ReturnStatusHistory> getByReturn(String returnId);
 }

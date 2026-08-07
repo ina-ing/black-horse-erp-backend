@@ -10,7 +10,7 @@ import com.inaing.blackhorse_erp.security.context.AuthPrincipal;
 
 public interface IOrderStatusHistoryService {
 
-    void record(Order order, OrderStatus status, ActionTrigger trigger, AuthPrincipal actor);
+    void record(Order order, OrderStatus status, ActionTrigger trigger, AuthPrincipal principal);
 
     List<OrderStatusHistory> getByOrder(String orderId);
 }

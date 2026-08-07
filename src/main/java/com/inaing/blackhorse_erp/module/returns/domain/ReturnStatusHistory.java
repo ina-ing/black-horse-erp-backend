@@ -51,9 +51,9 @@ public class ReturnStatusHistory extends BaseEntity {
     @Column(name = "trigger_type", nullable = false)
     private ActionTrigger trigger;
 
-    @Column(name = "actor_name", nullable = false)
-    private String actorName;
+    @Column(name = "principal_name", nullable = false)
+    private String principalName;
 
-    @Column(name = "actor_role", nullable = false)
-    private String actorRole;
+    @Column(name = "principal_role", nullable = false)
+    private String principalRole;
 }

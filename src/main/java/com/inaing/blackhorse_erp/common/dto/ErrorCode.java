@@ -23,6 +23,7 @@ public enum ErrorCode {
     EMPLOYEE_TYPE_NOT_FOUND(404, "Employee type not found"),
     ROLE_NOT_FOUND(404, "Role not found"),
     ORDER_NOT_FOUND(404, "Order not found"),
+    PRODUCTION_ORDER_NOT_FOUND(404, "Production Order not found"),
 
     ORDER_UPDATE_DENIED(403, "Access denied. You are not authorized to update this order."),
     RETURN_UPDATE_DENIED(403, "Access denied. You are not authorized to update this return."),

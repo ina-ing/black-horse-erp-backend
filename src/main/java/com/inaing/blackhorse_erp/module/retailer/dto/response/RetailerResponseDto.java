@@ -1,6 +1,6 @@
 package com.inaing.blackhorse_erp.module.retailer.dto.response;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 import com.inaing.blackhorse_erp.common.domain.Province;
 import com.inaing.blackhorse_erp.module.retailer.domain.enums.BusinessMedium;
@@ -18,6 +18,6 @@ public record RetailerResponseDto(
         Province province,
         BusinessType businessType,
         BusinessMedium businessMedium,
-        Instant createdAt) {
+        LocalDate joinedOn) {
 
 }

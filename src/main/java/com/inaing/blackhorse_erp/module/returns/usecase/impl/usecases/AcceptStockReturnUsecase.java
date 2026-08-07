@@ -42,11 +42,11 @@ public class AcceptStockReturnUsecase {
                     "Only approved stock returns can be accepted.");
         }
 
-        AuthPrincipal actor = currentUserProvider.currentPrincipal()
+        AuthPrincipal principal = currentUserProvider.currentPrincipal()
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         ret.setStatus(ReturnStatus.COMPLETED);
-        returnStatusHistoryService.record(ret, ReturnStatus.COMPLETED, ActionTrigger.MANUAL, actor);
+        returnStatusHistoryService.record(ret, ReturnStatus.COMPLETED, ActionTrigger.MANUAL, principal);
 
         // add stock to warehouse repository
         return returnMapper.toResponse(returnService.update(ret));

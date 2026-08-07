@@ -10,8 +10,8 @@ public record ReturnStatusHistoryResponseDto(
         String id,
         ReturnStatus status,
         ActionTrigger trigger,
-        String actorName,
-        String actorRole,
+        String principalName,
+        String principalRole,
         Instant createdAt) {
 
 }

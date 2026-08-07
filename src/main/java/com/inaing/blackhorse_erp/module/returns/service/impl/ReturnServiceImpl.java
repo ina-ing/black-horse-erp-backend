@@ -32,18 +32,6 @@ public class ReturnServiceImpl implements IReturnService {
     }
 
     @Override
-    public String generateReturnCode() {
-        for (int attempt = 0; attempt < 10; attempt++) {
-            String code = CodeGeneratorUtil.generate("RE-", 7);
-
-            if (!returnRepository.existsByCode(code)) {
-                return code;
-            }
-        }
-        throw new AppException(ErrorCode.IDENTIFIER_ALREADY_EXISTS);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public Return getByIdentifier(String identifier) {
 
@@ -65,4 +53,15 @@ public class ReturnServiceImpl implements IReturnService {
         return returnRepository.save(ret);
     }
 
+    @Override
+    public String generateReturnCode() {
+        for (int attempt = 0; attempt < 10; attempt++) {
+            String code = CodeGeneratorUtil.generate("RE-", 7);
+
+            if (!returnRepository.existsByCode(code)) {
+                return code;
+            }
+        }
+        throw new AppException(ErrorCode.IDENTIFIER_ALREADY_EXISTS);
+    }
 }

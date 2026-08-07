@@ -4,7 +4,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.BusinessRuleException;
 import com.inaing.blackhorse_erp.module.employee.domain.Employee;
 import com.inaing.blackhorse_erp.module.employee.service.IEmployeeService;

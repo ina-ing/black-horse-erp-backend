@@ -23,14 +23,14 @@ public class ReturnStatusHistoryImpl implements IReturnStatusHistoryService {
 
     @Override
     @Transactional
-    public void record(Return ret, ReturnStatus status, ActionTrigger trigger, AuthPrincipal actor) {
+    public void record(Return ret, ReturnStatus status, ActionTrigger trigger, AuthPrincipal principal) {
 
         ReturnStatusHistory history = ReturnStatusHistory.builder()
                 .returnId(ret)
                 .status(status)
                 .trigger(trigger)
-                .actorName(actor.name())
-                .actorRole(actor.role())
+                .principalName(principal.name())
+                .principalRole(principal.role())
                 .build();
 
         returnStatusHistoryRepository.save(history);
