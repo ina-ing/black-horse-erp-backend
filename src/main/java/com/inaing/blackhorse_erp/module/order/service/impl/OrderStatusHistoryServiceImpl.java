@@ -24,14 +24,14 @@ public class OrderStatusHistoryServiceImpl implements IOrderStatusHistoryService
     @Override
     @Transactional
     public void record(Order order, OrderStatus status, ActionTrigger trigger,
-            AuthPrincipal actor) {
+            AuthPrincipal principal) {
 
         OrderStatusHistory history = OrderStatusHistory.builder()
                 .order(order)
                 .status(status)
                 .trigger(trigger)
-                .actorName(actor.name())
-                .actorRole(actor.role())
+                .principalName(principal.name())
+                .principalRole(principal.role())
                 .build();
 
         orderStatusHistoryRepository.save(history);

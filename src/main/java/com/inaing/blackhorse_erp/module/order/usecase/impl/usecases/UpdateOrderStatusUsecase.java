@@ -37,15 +37,15 @@ public class UpdateOrderStatusUsecase {
             throw new AppException(ErrorCode.ORDER_NOT_FOUND);
         }
 
-        AuthPrincipal actor = currentUserProvider.currentPrincipal()
+        AuthPrincipal principal = currentUserProvider.currentPrincipal()
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        Role role = Role.fromName(actor.role());
+        Role role = Role.fromName(principal.role());
 
         switch (request.status()) {
-            case APPROVED -> approve(order, role, actor);
-            case PROCESSING -> startProcessing(role, order, actor);
-            case CANCELLED -> cancel(order, role, actor);
+            case APPROVED -> approve(order, role, principal);
+            case PROCESSING -> startProcessing(role, order, principal);
+            case CANCELLED -> cancel(order, role, principal);
             default -> throw new BusinessRuleException(
                     "INVALID_STATUS_TRANSITION",
                     "This status cannot be set manually.");
@@ -53,12 +53,12 @@ public class UpdateOrderStatusUsecase {
         return orderMapper.toResponse(orderService.update(order));
     }
 
-    private void approve(Order order, Role role, AuthPrincipal actor) {
+    private void approve(Order order, Role role, AuthPrincipal principal) {
 
         if (role != Role.ADMIN) {
             if (role != Role.SALES
                     || order.getHandledBy() == null
-                    || !actor.id().equals(order.getHandledBy().getId())) {
+                    || !principal.id().equals(order.getHandledBy().getId())) {
 
                 throw new BusinessRuleException(
                         "ORDER_APPROVE_DENIED",
@@ -85,10 +85,10 @@ public class UpdateOrderStatusUsecase {
         order.setStatus(OrderStatus.APPROVED);
 
         orderStatusHistoryService.record(order, OrderStatus.APPROVED, ActionTrigger.MANUAL,
-                actor);
+                principal);
     }
 
-    private void startProcessing(Role role, Order order, AuthPrincipal actor) {
+    private void startProcessing(Role role, Order order, AuthPrincipal principal) {
 
         if (role != Role.WAREHOUSE) {
             throw new BusinessRuleException(
@@ -105,15 +105,15 @@ public class UpdateOrderStatusUsecase {
         order.setStatus(OrderStatus.PROCESSING);
 
         orderStatusHistoryService.record(order, OrderStatus.PROCESSING,
-                ActionTrigger.MANUAL, actor);
+                ActionTrigger.MANUAL, principal);
     }
 
-    private void cancel(Order order, Role role, AuthPrincipal actor) {
+    private void cancel(Order order, Role role, AuthPrincipal principal) {
 
         if (role != Role.ADMIN) {
             switch (role) {
                 case RETAILER -> {
-                    if (!order.getRetailer().getId().equals(actor.id())) {
+                    if (!order.getRetailer().getId().equals(principal.id())) {
                         throw new BusinessRuleException(
                                 "ORDER_CANCEL_DENIED",
                                 "You can only cancel your own orders.");
@@ -122,7 +122,7 @@ public class UpdateOrderStatusUsecase {
 
                 case SALES -> {
                     if (order.getHandledBy() == null
-                            || !order.getHandledBy().getId().equals(actor.id())) {
+                            || !order.getHandledBy().getId().equals(principal.id())) {
                         throw new BusinessRuleException(
                                 "ORDER_CANCEL_DENIED",
                                 "You are not allowed to cancel this order.");
@@ -142,6 +142,6 @@ public class UpdateOrderStatusUsecase {
         }
 
         order.setStatus(OrderStatus.CANCELLED);
-        orderStatusHistoryService.record(order, OrderStatus.CANCELLED, ActionTrigger.CANCELLATION, actor);
+        orderStatusHistoryService.record(order, OrderStatus.CANCELLED, ActionTrigger.CANCELLATION, principal);
     }
 }

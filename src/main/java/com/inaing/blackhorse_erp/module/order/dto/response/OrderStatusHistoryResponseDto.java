@@ -10,8 +10,8 @@ public record OrderStatusHistoryResponseDto(
         String id,
         OrderStatus status,
         ActionTrigger trigger,
-        String actorName,
-        String actorRole,
+        String principalName,
+        String principalRole,
         Instant createdAt) {
 
 }

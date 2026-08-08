@@ -50,9 +50,9 @@ public class FulfillOrderUsecase {
                                         "Only orders in PROCESSING or PARTIAL status can be fulfilled.");
                 }
 
-                AuthPrincipal actor = currentUserProvider.currentPrincipal()
+                AuthPrincipal principal = currentUserProvider.currentPrincipal()
                                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-                if (Role.fromName(actor.role()) != Role.WAREHOUSE) {
+                if (Role.fromName(principal.role()) != Role.WAREHOUSE) {
                         throw new BusinessRuleException(
                                         "ORDER_FULFILL_DENIED",
                                         "You are not allowed to fulfill this order.");
@@ -100,7 +100,7 @@ public class FulfillOrderUsecase {
 
                 Order updated = orderService.update(order);
                 orderStatusHistoryService.record(updated, updated.getStatus(),
-                                ActionTrigger.FULFILLMENT, actor);
+                                ActionTrigger.FULFILLMENT, principal);
 
                 return orderMapper.toResponse(updated);
         }

@@ -17,5 +17,5 @@ public enum Role {
         } catch (IllegalArgumentException e) {
             return null;
         }
-    }
+}
 }
