@@ -14,5 +14,8 @@ public interface RetailerMapper {
 
     @Mapping(target = "passwordHash", source = "password")
     @Mapping(target = "assignedSalesman", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "code", ignore = true)
+    @Mapping(target = "joinedOn", ignore = true)
     Retailer toEntity(RetailerCreationRequestDto request);
 }

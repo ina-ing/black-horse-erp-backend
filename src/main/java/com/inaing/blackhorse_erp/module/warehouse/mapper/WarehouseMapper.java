@@ -24,5 +24,11 @@ public interface WarehouseMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "code", ignore = true)
     @Mapping(target = "manager", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
     void updateEntity(WarehouseRequestDto request, @MappingTarget Warehouse warehouse);
 }

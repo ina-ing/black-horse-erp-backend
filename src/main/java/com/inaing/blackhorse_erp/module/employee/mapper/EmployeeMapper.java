@@ -11,6 +11,10 @@ import com.inaing.blackhorse_erp.module.employee.dto.EmployeeResponseDto;
 public interface EmployeeMapper {
     EmployeeResponseDto toResponse(Employee employee);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "code", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "joinedOn", ignore = true)
     @Mapping(target = "passwordHash", source = "password")
     Employee toEntity(EmployeeCreationRequestDto request);
 }

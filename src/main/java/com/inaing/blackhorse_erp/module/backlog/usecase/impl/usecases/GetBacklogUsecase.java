@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
+import com.inaing.blackhorse_erp.module.backlog.domain.Backlog;
 import com.inaing.blackhorse_erp.module.backlog.dto.response.BacklogResponseDto;
 import com.inaing.blackhorse_erp.module.backlog.mapper.BacklogMapper;
 import com.inaing.blackhorse_erp.module.backlog.service.IBacklogService;
@@ -29,6 +30,13 @@ public class GetBacklogUsecase {
             throw new AppException(ErrorCode.NOT_FOUND, "Factory not found " + factoryIdentifier);
         }
 
-        return backlogMapper.toResponse(backlogService.getByFactoryId(factory.getId()));
+        Backlog backlog = backlogService.getByFactoryId(factory.getId());
+
+        backlog.setItems(
+                backlog.getItems().stream()
+                        .filter(item -> item.getQuantity() > 0)
+                        .toList());
+
+        return backlogMapper.toResponse(backlog);
     }
 }

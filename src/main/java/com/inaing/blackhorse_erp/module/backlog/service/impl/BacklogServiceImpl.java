@@ -46,7 +46,7 @@ public class BacklogServiceImpl implements IBacklogService {
     @Override
     @Transactional(readOnly = true)
     public Backlog getByFactoryId(String factoryId) {
-        return backlogRepository.findWithOutstandingItems(factoryId)
+        return backlogRepository.findByFactoryId(factoryId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND,
                         "Production backlog not found for factory " + factoryId));
     }

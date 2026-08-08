@@ -14,7 +14,6 @@ import com.inaing.blackhorse_erp.module.factory.domain.Factory;
 import com.inaing.blackhorse_erp.module.factory.service.IFactoryService;
 import com.inaing.blackhorse_erp.module.product.domain.ProductVariantSize;
 import com.inaing.blackhorse_erp.module.productionOrder.domain.ProductionOrder;
-import com.inaing.blackhorse_erp.module.productionOrder.domain.ProductionOrderItem;
 import com.inaing.blackhorse_erp.module.productionOrder.domain.enums.ProductionOrderStatus;
 import com.inaing.blackhorse_erp.module.productionOrder.dto.response.ProductionOrderResponseDto;
 import com.inaing.blackhorse_erp.module.productionOrder.mapper.ProductionOrderMapper;
