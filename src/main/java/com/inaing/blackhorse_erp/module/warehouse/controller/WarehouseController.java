@@ -5,8 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inaing.blackhorse_erp.common.dto.ApiResponse;
-import com.inaing.blackhorse_erp.module.warehouse.dto.request.WarehouseCreationRequestDto;
-import com.inaing.blackhorse_erp.module.warehouse.dto.request.WarehouseUpdateRequestDto;
+import com.inaing.blackhorse_erp.module.warehouse.dto.request.WarehouseRequestDto;
 import com.inaing.blackhorse_erp.module.warehouse.dto.response.WarehouseResponseDto;
 import com.inaing.blackhorse_erp.module.warehouse.usecase.IWarehouseUsecases;
 
@@ -31,20 +30,20 @@ public class WarehouseController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ApiResponse<WarehouseResponseDto> create(@Valid @RequestBody WarehouseCreationRequestDto respose) {
+    public ApiResponse<WarehouseResponseDto> create(@Valid @RequestBody WarehouseRequestDto respose) {
         return ApiResponse.created("Warehouse created", warehouseUsecases.create(respose));
     }
 
     @PutMapping("/{identifier}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ApiResponse<WarehouseResponseDto> update(@PathVariable String identifier,
-            @Valid @RequestBody WarehouseUpdateRequestDto request) {
+            @Valid @RequestBody WarehouseRequestDto request) {
         return ApiResponse.ok("Warehouse updated", warehouseUsecases.update(identifier, request));
     }
 
     @GetMapping("/{identifier}")
     public ApiResponse<WarehouseResponseDto> getByIdentifier(@PathVariable String identifier) {
-        return ApiResponse.ok(warehouseUsecases.getByIdentifier(identifier));
+    return ApiResponse.ok(warehouseUsecases.getByIdentifier(identifier));
     }
 
 }

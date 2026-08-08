@@ -45,6 +45,15 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Warehouse getByIdentifier(String identifier) {
+        if (UUIDUtils.isUUID(identifier)) {
+            return warehouseRepository.findById(identifier).orElse(null);
+        }
+        return warehouseRepository.findByCode(identifier).orElse(null);
+    }
+
+    @Override
     public String generateWarehouseCode() {
         for (int attempt = 0; attempt < 10; attempt++) {
             String code = CodeGeneratorUtil.generate("WH-", 4);
@@ -54,15 +63,6 @@ public class WarehouseServiceImpl implements IWarehouseService {
             }
         }
         throw new AppException(ErrorCode.IDENTIFIER_ALREADY_EXISTS);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Warehouse getByIdentifier(String identifier) {
-        if (UUIDUtils.isUUID(identifier)) {
-            return warehouseRepository.findById(identifier).orElse(null);
-        }
-        return warehouseRepository.findByCode(identifier).orElse(null);
     }
 
 }

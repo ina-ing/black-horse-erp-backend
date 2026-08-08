@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class GetWarehouse {
+public class GetWarehouseUsecase {
 
     private final WarehouseMapper warehouseMapper;
     private final IWarehouseService warehouseService;

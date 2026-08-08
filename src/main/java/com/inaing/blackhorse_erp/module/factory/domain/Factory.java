@@ -1,4 +1,4 @@
-package com.inaing.blackhorse_erp.module.warehouse.domain;
+package com.inaing.blackhorse_erp.module.factory.domain;
 
 import org.hibernate.annotations.SQLRestriction;
 
@@ -25,14 +25,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "warehouses")
+@Table(name = "factories")
 @SQLRestriction("deleted = false")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class Warehouse extends BaseEntity{
+public class Factory extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
