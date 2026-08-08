@@ -9,6 +9,7 @@ import com.inaing.blackhorse_erp.common.domain.Province;
 import com.inaing.blackhorse_erp.module.employee.domain.Employee;
 import com.inaing.blackhorse_erp.module.retailer.domain.enums.BusinessMedium;
 import com.inaing.blackhorse_erp.module.retailer.domain.enums.BusinessType;
+import com.inaing.blackhorse_erp.module.role.domain.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,7 +47,7 @@ public class Retailer extends BaseEntity {
 
     @Column(name = "code", nullable = false, unique = true)
     private String code;
- 
+
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 

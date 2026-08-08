@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "return_status_history")
+@Table(name = "return_status_histories")
 @SQLRestriction("deleted = false")
 @Getter
 @Setter

@@ -16,4 +16,6 @@ public interface FactoryRepository extends JpaRepository<Factory, String> {
 
     Optional<Factory> findByName(String name);
 
+    Optional<Factory> findByManagerId(String managerId);
+
 }

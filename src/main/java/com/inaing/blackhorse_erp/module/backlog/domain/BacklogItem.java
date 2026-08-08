@@ -1,15 +1,12 @@
-package com.inaing.blackhorse_erp.module.order.domain;
+package com.inaing.blackhorse_erp.module.backlog.domain;
 
 import org.hibernate.annotations.SQLRestriction;
 
 import com.inaing.blackhorse_erp.common.domain.BaseEntity;
-import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
-import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
+import com.inaing.blackhorse_erp.module.product.domain.ProductVariantSize;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,14 +23,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "order_status_histories")
+@Table(name = "backlog_items", uniqueConstraints = @UniqueConstraint(columnNames = { "backlog_id",
+        "variant_size_id" }))
 @SQLRestriction("deleted = false")
 @Getter
 @Setter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class OrderStatusHistory extends BaseEntity {
+public class BacklogItem extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -40,20 +39,13 @@ public class OrderStatusHistory extends BaseEntity {
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "order_id", nullable = false)
-    private Order order; 
+    @JoinColumn(name = "backlog_id", nullable = false)
+    private Backlog backlog;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private OrderStatus status;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "variant_size_id", nullable = false)
+    private ProductVariantSize variantSize;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "trigger_type", nullable = false)
-    private ActionTrigger trigger;
-
-    @Column(name = "principal_name", nullable = false)
-    private String principalName;
-
-    @Column(name = "principal_role", nullable = false)
-    private String principalRole;
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
 }

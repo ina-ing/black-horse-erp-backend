@@ -16,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "employees", indexes = { @Index(name = "idx_employee_code", columnList = "code") })
+@Table(name = "employees", indexes = {
+        @Index(name = "idx_employee_code", columnList = "code") }, uniqueConstraints = @UniqueConstraint(columnNames = "phone"))
 @SQLRestriction("deleted = false")
 @Getter
 @Setter
@@ -44,7 +46,7 @@ public class Employee extends BaseEntity {
     @Column(name = "fullname", nullable = false, unique = false, length = 120)
     private String fullname;
 
-    @Column(name = "password_hash", nullable = false)
+    @Column(name = "password_hash")
     private String passwordHash;
 
     @Column(name = "phone", nullable = false, unique = true, length = 20)

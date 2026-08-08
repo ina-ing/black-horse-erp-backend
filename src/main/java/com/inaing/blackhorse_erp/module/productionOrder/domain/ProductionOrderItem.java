@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "production_order_item", uniqueConstraints = @UniqueConstraint(columnNames = { "production_order_id",
+@Table(name = "production_order_items", uniqueConstraints = @UniqueConstraint(columnNames = { "production_order_id",
         "variant_size_id" }))
 @SQLRestriction("deleted = false")
 @Getter

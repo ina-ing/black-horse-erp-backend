@@ -52,6 +52,12 @@ public class FactoryServiceImpl implements IFactoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Factory getByManagerId(String managerId) {
+        return factoryRepository.findByManagerId(managerId).orElse(null);
+    }
+
+    @Override
     public String generateFactoryCode() {
         for (int attempt = 0; attempt < 10; attempt++) {
             String code = CodeGeneratorUtil.generate("FC-", 4);

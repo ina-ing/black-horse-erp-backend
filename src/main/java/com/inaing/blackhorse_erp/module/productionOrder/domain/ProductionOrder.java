@@ -71,7 +71,7 @@ public class ProductionOrder extends BaseEntity {
 
     @OneToMany(mappedBy = "productionOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<ProductionOrderItem> items = new ArrayList<>();
+    private List< ProductionOrderItem> items = new ArrayList<>();
 
     public void addItem(ProductionOrderItem item) {
         items.add(item);

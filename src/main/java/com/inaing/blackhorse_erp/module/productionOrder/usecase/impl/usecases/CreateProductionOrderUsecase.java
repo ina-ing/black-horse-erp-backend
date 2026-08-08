@@ -9,7 +9,7 @@ import com.inaing.blackhorse_erp.module.product.domain.ProductVariantSize;
 import com.inaing.blackhorse_erp.module.product.service.IProductVariantSizeService;
 import com.inaing.blackhorse_erp.module.productionOrder.domain.ProductionOrder;
 import com.inaing.blackhorse_erp.module.productionOrder.domain.ProductionOrderItem;
-import com.inaing.blackhorse_erp.module.productionOrder.dto.request.ProductionOrderCreationRequstDto;
+import com.inaing.blackhorse_erp.module.productionOrder.dto.request.ProductionOrderCreationRequestDto;
 import com.inaing.blackhorse_erp.module.productionOrder.dto.response.ProductionOrderResponseDto;
 import com.inaing.blackhorse_erp.module.productionOrder.mapper.ProductionOrderMapper;
 import com.inaing.blackhorse_erp.module.productionOrder.service.IProductionOrderService;
@@ -33,7 +33,7 @@ public class CreateProductionOrderUsecase {
     private final ProductionOrderMapper productionOrderMapper;
 
     @Transactional
-    public ProductionOrderResponseDto execute(ProductionOrderCreationRequstDto request) {
+    public ProductionOrderResponseDto execute(ProductionOrderCreationRequestDto request) {
 
         AuthPrincipal principal = currentUserProvider.currentPrincipal()
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));

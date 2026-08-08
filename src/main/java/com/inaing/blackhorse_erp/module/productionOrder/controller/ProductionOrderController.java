@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inaing.blackhorse_erp.common.dto.ApiResponse;
-import com.inaing.blackhorse_erp.module.productionOrder.dto.request.ProductionOrderCreationRequstDto;
+import com.inaing.blackhorse_erp.module.productionOrder.dto.request.ProductionOrderCreationRequestDto;
 import com.inaing.blackhorse_erp.module.productionOrder.dto.response.ProductionOrderResponseDto;
 import com.inaing.blackhorse_erp.module.productionOrder.usecase.IProductionOrderUsecases;
 
@@ -33,7 +33,7 @@ public class ProductionOrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<ProductionOrderResponseDto> create(
-            @Valid @RequestBody ProductionOrderCreationRequstDto request) {
+            @Valid @RequestBody ProductionOrderCreationRequestDto request) {
         return ApiResponse.created("Production order created", productionOrderUsecases.create(request));
     }
 

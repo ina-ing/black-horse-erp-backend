@@ -38,6 +38,7 @@ public class EmployeeAuthUseCaseImpl implements IAuthUseCase<EmployeeLoginReques
         Employee employee = employeeService.findByPhone(request.phone());
 
         if (employee == null
+                || employee.getPasswordHash() == null
                 || !passwordEncoder.matches(request.password(), employee.getPasswordHash())
                 || !employee.isActive()) {
             throw new AppException(ErrorCode.INVALID_CREDENTIALS);
