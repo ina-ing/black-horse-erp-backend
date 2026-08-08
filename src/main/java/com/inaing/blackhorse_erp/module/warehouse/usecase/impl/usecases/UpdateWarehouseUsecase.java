@@ -9,7 +9,7 @@ import com.inaing.blackhorse_erp.module.employee.domain.Employee;
 import com.inaing.blackhorse_erp.module.employee.service.IEmployeeService;
 import com.inaing.blackhorse_erp.module.role.domain.Role;
 import com.inaing.blackhorse_erp.module.warehouse.domain.Warehouse;
-import com.inaing.blackhorse_erp.module.warehouse.dto.request.WarehouseUpdateRequestDto;
+import com.inaing.blackhorse_erp.module.warehouse.dto.request.WarehouseRequestDto;
 import com.inaing.blackhorse_erp.module.warehouse.dto.response.WarehouseResponseDto;
 import com.inaing.blackhorse_erp.module.warehouse.mapper.WarehouseMapper;
 import com.inaing.blackhorse_erp.module.warehouse.service.IWarehouseService;
@@ -25,7 +25,7 @@ public class UpdateWarehouseUsecase {
     private final IEmployeeService employeeService;
 
     @Transactional
-    public WarehouseResponseDto execute(String identifier, WarehouseUpdateRequestDto request) {
+    public WarehouseResponseDto execute(String identifier, WarehouseRequestDto request) {
 
         Warehouse warehouse = warehouseService.getByIdentifier(identifier);
         if (warehouse == null) {
