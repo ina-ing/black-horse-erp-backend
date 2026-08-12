@@ -2,6 +2,7 @@ package com.inaing.blackhorse_erp.module.warehouse.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.inaing.blackhorse_erp.module.warehouse.domain.Warehouse;
@@ -12,7 +13,10 @@ public interface WarehouseRepository extends JpaRepository<Warehouse, String> {
 
     boolean existsByCode(String code);
 
+    @EntityGraph(attributePaths = {"manager"})
     Optional<Warehouse> findByCode(String identifier);
 
     Optional<Warehouse> findByName(String name);
+
+    Optional<Warehouse> findByManagerId(String id);
 }

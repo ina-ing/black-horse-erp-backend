@@ -6,8 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.inaing.blackhorse_erp.common.dto.ErrorCode;
-import com.inaing.blackhorse_erp.exception.exceptions.AppException;
+import com.inaing.blackhorse_erp.common.domain.enums.CodeType;
 import com.inaing.blackhorse_erp.module.returns.domain.Return;
 import com.inaing.blackhorse_erp.module.returns.repository.ReturnRepository;
 import com.inaing.blackhorse_erp.module.returns.service.IReturnService;
@@ -25,7 +24,7 @@ public class ReturnServiceImpl implements IReturnService {
     @Override
     @Transactional
     public Return create(Return ret) {
-        ret.setCode(this.generateReturnCode());
+        ret.setCode(CodeGeneratorUtil.generateCode(CodeType.RETURN));
         ret.setReturnDate(Instant.now());
 
         return returnRepository.save(ret);
@@ -53,15 +52,4 @@ public class ReturnServiceImpl implements IReturnService {
         return returnRepository.save(ret);
     }
 
-    @Override
-    public String generateReturnCode() {
-        for (int attempt = 0; attempt < 10; attempt++) {
-            String code = CodeGeneratorUtil.generate("RE-", 7);
-
-            if (!returnRepository.existsByCode(code)) {
-                return code;
-            }
-        }
-        throw new AppException(ErrorCode.IDENTIFIER_ALREADY_EXISTS);
-    }
 }

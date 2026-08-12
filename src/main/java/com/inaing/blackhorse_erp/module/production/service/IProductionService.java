@@ -13,6 +13,4 @@ public interface IProductionService {
     Production getByIdentifier(String identifier);
 
     List<Production> getAll();
-
-    String generateProductionCode();
 }

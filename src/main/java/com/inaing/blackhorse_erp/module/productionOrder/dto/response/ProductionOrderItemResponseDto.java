@@ -1,6 +1,6 @@
 package com.inaing.blackhorse_erp.module.productionOrder.dto.response;
 
-public record ProductionOrderItemsResponseDto(
+public record ProductionOrderItemResponseDto(
 
     String id,
     String articleName,

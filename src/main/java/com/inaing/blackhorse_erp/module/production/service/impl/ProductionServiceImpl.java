@@ -5,8 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.inaing.blackhorse_erp.common.dto.ErrorCode;
-import com.inaing.blackhorse_erp.exception.exceptions.AppException;
+import com.inaing.blackhorse_erp.common.domain.enums.CodeType;
 import com.inaing.blackhorse_erp.module.production.domain.Production;
 import com.inaing.blackhorse_erp.module.production.repository.ProductionRepository;
 import com.inaing.blackhorse_erp.module.production.service.IProductionService;
@@ -24,7 +23,7 @@ public class ProductionServiceImpl implements IProductionService {
     @Override
     @Transactional
     public Production create(Production production) {
-        production.setCode(this.generateProductionCode());
+        production.setCode(CodeGeneratorUtil.generateCode(CodeType.PRODUCTION));
         return productionRepository.save(production);
     }
 
@@ -47,16 +46,5 @@ public class ProductionServiceImpl implements IProductionService {
     @Transactional(readOnly = true)
     public List<Production> getAll() {
         return productionRepository.findAll();
-    }
-
-    @Override
-    public String generateProductionCode() {
-        for (int attempt = 0; attempt < 10; attempt++) {
-            String code = CodeGeneratorUtil.generate("PR-", 6);
-            if (!productionRepository.existsByCode(code)) {
-                return code;
-            }
-        }
-        throw new AppException(ErrorCode.IDENTIFIER_ALREADY_EXISTS);
     }
 }

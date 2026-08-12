@@ -12,6 +12,8 @@ public interface IBacklogService {
 
     Backlog addQuantities(Factory factory, Map<ProductVariantSize, Integer> quantities);
 
+    Backlog reduceQuantities(Factory factory, Map<ProductVariantSize, Integer> quantities);
+
     Backlog getByFactoryId(String factoryId);
 
 }

@@ -44,6 +44,19 @@ public class BacklogServiceImpl implements IBacklogService {
     }
 
     @Override
+    @Transactional
+    public Backlog reduceQuantities(Factory factory, Map<ProductVariantSize, Integer> quantities) {
+        Backlog backlog = backlogRepository.findByFactoryId(factory.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND,
+                        "Production backlog not found for factory " + factory.getId()));
+
+        quantities.forEach(backlog::reduce);
+        backlog.recalculateTotals();
+
+        return backlogRepository.save(backlog);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Backlog getByFactoryId(String factoryId) {
         return backlogRepository.findByFactoryId(factoryId)

@@ -2,6 +2,7 @@ package com.inaing.blackhorse_erp.module.warehouse.usecase.impl;
 
 import org.springframework.stereotype.Component;
 
+import com.inaing.blackhorse_erp.module.warehouse.domain.Warehouse;
 import com.inaing.blackhorse_erp.module.warehouse.dto.request.WarehouseRequestDto;
 import com.inaing.blackhorse_erp.module.warehouse.dto.response.WarehouseResponseDto;
 import com.inaing.blackhorse_erp.module.warehouse.usecase.IWarehouseUsecases;
@@ -30,7 +31,7 @@ public class WarehouseUsecasesImpl implements IWarehouseUsecases {
     }
 
     @Override
-    public WarehouseResponseDto getByIdentifier(String identifier) {
+    public Warehouse getByIdentifier(String identifier) {
         return getWarehouseUsecase.execute(identifier);
     }
 

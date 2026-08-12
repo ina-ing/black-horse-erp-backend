@@ -13,6 +13,4 @@ public interface IReturnService {
     List<Return> getAll();
 
     Return update(Return ret);
-
-    String generateReturnCode();
 }

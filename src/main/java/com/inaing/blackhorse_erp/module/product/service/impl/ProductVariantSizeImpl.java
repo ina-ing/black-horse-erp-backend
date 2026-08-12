@@ -24,4 +24,10 @@ public class ProductVariantSizeImpl implements IProductVariantSizeService {
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND, "Variant size not found " + id));
     }
 
+    @Override
+    @Transactional
+    public ProductVariantSize update(ProductVariantSize variantSize) {
+        return variantSizeRepository.save(variantSize);
+    }
+
 }

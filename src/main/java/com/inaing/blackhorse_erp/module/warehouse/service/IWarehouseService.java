@@ -10,5 +10,5 @@ public interface IWarehouseService {
 
     Warehouse getByIdentifier(String identifier);
 
-    String generateWarehouseCode();
+    Warehouse getByManagerId(String managerId);
 }

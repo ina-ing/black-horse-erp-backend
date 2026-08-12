@@ -28,12 +28,16 @@ public class CreateWarehouseUsecase {
     public WarehouseResponseDto execute(WarehouseRequestDto request) {
 
         Employee manager = employeeService.getById(request.manager());
+
         if (manager == null || manager.getRole() != Role.WAREHOUSE) {
             throw new AppException(ErrorCode.EMPLOYEE_NOT_FOUND);
         }
 
         Warehouse warehouse = warehouseMapper.toEntity(request);
         warehouse.setManager(manager);
-        return warehouseMapper.toResponse(warehouseService.create(warehouse));
+
+        Warehouse createdWarehouse = warehouseService.create(warehouse);
+
+        return warehouseMapper.toResponse(createdWarehouse);
     }
 }

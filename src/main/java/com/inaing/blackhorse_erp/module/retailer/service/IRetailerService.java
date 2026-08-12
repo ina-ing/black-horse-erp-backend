@@ -9,8 +9,6 @@ public interface IRetailerService {
 
     Retailer create(Retailer retailer);
 
-    String generateRetailerCode();
-
     Retailer findByPhone(String phone);
 
     List<Retailer> getAll();
@@ -20,4 +18,8 @@ public interface IRetailerService {
     Retailer getById(String id);
 
     Retailer getByIdentifier(String identifier);
+
+    List<Retailer> getAssignedRetailers(String assignedSalesmanId);
+
+    Retailer update(Retailer retailer);
 }

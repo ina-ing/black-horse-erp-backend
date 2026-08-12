@@ -1,5 +1,6 @@
 package com.inaing.blackhorse_erp.module.employee.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, String>{
     boolean existsByRole(Role role);
 
     boolean existsByCode(String code);
+
+    List<Employee> findByRole(Role role);
 }

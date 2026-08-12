@@ -3,10 +3,12 @@ package com.inaing.blackhorse_erp.module.employee.service.impl;
 import com.inaing.blackhorse_erp.module.employee.repository.EmployeeRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inaing.blackhorse_erp.common.domain.enums.CodeType;
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
 import com.inaing.blackhorse_erp.module.employee.domain.Employee;
@@ -65,24 +67,29 @@ public class EmployeeServiceImpl implements IEmployeeService {
     @Override
     public String generateEmployeeCode(Role role) {
 
-        String prefix = switch (role) {
-            case ADMIN -> "AD-";
-            case SALES -> "SL-";
-            case WAREHOUSE -> "WH-";
-            case FACTORY -> "FC-";
+        CodeType type = switch (role) {
+            case ADMIN -> CodeType.ADMIN;
+            case SALES -> CodeType.SALES;
+            case WAREHOUSE -> CodeType.WAREHOUSE;
+            case FACTORY -> CodeType.FACTORY;
             default -> throw new AppException(
                     ErrorCode.INVALID_ENUM_VALUE,
                     "Role " + role + " is not a valid employee role.");
         };
 
-        for (int attempt = 0; attempt < 10; attempt++) {
-            String code = CodeGeneratorUtil.generate(prefix, 6);
+        return CodeGeneratorUtil.generateCode(type);
+    }
 
-            if (!employeeRepository.existsByCode(code)) {
-                return code;
-            }
-        }
-        throw new AppException(ErrorCode.IDENTIFIER_ALREADY_EXISTS);
+    @Override
+    @Transactional
+    public Employee update(Employee employee) {
+       return employeeRepository.save(employee);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Employee> getByRole(Role role) {
+        return employeeRepository.findByRole(role);
     }
 
 }

@@ -13,6 +13,4 @@ public interface IOrderService {
     List<Order> getAll();
 
     Order update(Order order);
-
-    String generateOrderCode();
 }

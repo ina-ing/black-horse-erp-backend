@@ -8,15 +8,19 @@ import com.inaing.blackhorse_erp.common.dto.ApiResponse;
 import com.inaing.blackhorse_erp.common.dto.list.ListDtoWithAnalytics;
 import com.inaing.blackhorse_erp.module.retailer.dto.analytics.RetailerListAnalyticsDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerCreationRequestDto;
+import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.response.RetailerResponseDto;
 import com.inaing.blackhorse_erp.module.retailer.usecase.IRetailerUsecase;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,20 +36,35 @@ public class RetailerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ADMIN','SALES')")
     public ApiResponse<RetailerResponseDto> create(@Valid @RequestBody RetailerCreationRequestDto request) {
         return ApiResponse.created("Retailer created", retailerUsecase.create(request));
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','SALES')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<ListDtoWithAnalytics<RetailerListAnalyticsDto, RetailerResponseDto>> getAllRetailers(
             @RequestParam(required = false) String code, Pageable pageable) {
         return ApiResponse.ok(retailerUsecase.getAllRetailers());
     }
 
     @GetMapping("/{identifier}")
+    @PreAuthorize("hasAnyRole('ADMIN','SALES', 'RETAILER')")
     public ApiResponse<RetailerResponseDto> getByCode(@PathVariable String identifier) {
         return ApiResponse.ok(retailerUsecase.getByIdentifier(identifier));
+    }
+
+    @GetMapping("/assigned")
+    @PreAuthorize("hasRole('SALES')")
+    public ApiResponse<List<RetailerResponseDto>> getAssignedRetailers() {
+        return ApiResponse.ok(retailerUsecase.getAssignedRetailers());
+    }
+
+    @PatchMapping("/{identifier}")
+    @PreAuthorize("hasAnyRole('ADMIN','SALES')")
+    public ApiResponse<RetailerResponseDto> update(@PathVariable String identifier,
+            @Valid @RequestBody RetailerUpdateRequestDto request) {
+        return ApiResponse.ok("Retailer updated", retailerUsecase.update(identifier, request));
     }
 
 }

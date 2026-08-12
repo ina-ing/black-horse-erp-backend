@@ -3,6 +3,7 @@ package com.inaing.blackhorse_erp.module.warehouse.service.impl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inaing.blackhorse_erp.common.domain.enums.CodeType;
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
 import com.inaing.blackhorse_erp.module.warehouse.domain.Warehouse;
@@ -27,7 +28,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
                     "Warehouse name already exists" + warehouse.getName());
         }
 
-        warehouse.setCode(this.generateWarehouseCode());
+        warehouse.setCode(CodeGeneratorUtil.generateCode(CodeType.WAREHOUSE));
         return warehouseRepository.save(warehouse);
     }
 
@@ -54,15 +55,9 @@ public class WarehouseServiceImpl implements IWarehouseService {
     }
 
     @Override
-    public String generateWarehouseCode() {
-        for (int attempt = 0; attempt < 10; attempt++) {
-            String code = CodeGeneratorUtil.generate("WH-", 4);
-
-            if (!warehouseRepository.existsByCode(code)) {
-                return code;
-            }
-        }
-        throw new AppException(ErrorCode.IDENTIFIER_ALREADY_EXISTS);
+    @Transactional(readOnly = true)
+    public Warehouse getByManagerId(String managerId) {
+        return warehouseRepository.findByManagerId(managerId).orElse(null);
     }
 
 }

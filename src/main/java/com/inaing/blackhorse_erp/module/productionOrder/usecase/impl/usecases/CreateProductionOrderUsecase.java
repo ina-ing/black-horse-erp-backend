@@ -13,11 +13,9 @@ import com.inaing.blackhorse_erp.module.productionOrder.dto.request.ProductionOr
 import com.inaing.blackhorse_erp.module.productionOrder.dto.response.ProductionOrderResponseDto;
 import com.inaing.blackhorse_erp.module.productionOrder.mapper.ProductionOrderMapper;
 import com.inaing.blackhorse_erp.module.productionOrder.service.IProductionOrderService;
-import com.inaing.blackhorse_erp.module.role.domain.Role;
+import com.inaing.blackhorse_erp.module.warehouse.authorization.WarehouseAuthorizationService;
 import com.inaing.blackhorse_erp.module.warehouse.domain.Warehouse;
 import com.inaing.blackhorse_erp.module.warehouse.service.IWarehouseService;
-import com.inaing.blackhorse_erp.security.context.AuthPrincipal;
-import com.inaing.blackhorse_erp.security.context.CurrentUserProvider;
 import com.inaing.blackhorse_erp.utils.ItemsUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -26,27 +24,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CreateProductionOrderUsecase {
 
-    private final CurrentUserProvider currentUserProvider;
     private final IWarehouseService warehouseService;
     private final IProductionOrderService productionOrderService;
     private final IProductVariantSizeService productVariantSizeService;
     private final ProductionOrderMapper productionOrderMapper;
+    private final WarehouseAuthorizationService warehouseAuthorizationService;
 
     @Transactional
     public ProductionOrderResponseDto execute(ProductionOrderCreationRequestDto request) {
-
-        AuthPrincipal principal = currentUserProvider.currentPrincipal()
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         Warehouse warehouse = warehouseService.getByIdentifier(request.warehouse());
         if (warehouse == null) {
             throw new AppException(ErrorCode.NOT_FOUND, "Warehouse not found " + request.warehouse());
         }
-
-        if (!principal.role().equals(Role.ADMIN.toString())
-                && !principal.id().equals(warehouse.getManager().getId())) {
-            throw new AppException(ErrorCode.ACCESS_DENIED);
-        }
+        warehouseAuthorizationService.assertCanAccess(warehouse);
 
         ProductionOrder order = ProductionOrder.builder()
                 .warehouse(warehouse)

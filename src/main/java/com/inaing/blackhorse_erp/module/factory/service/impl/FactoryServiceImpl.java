@@ -3,6 +3,7 @@ package com.inaing.blackhorse_erp.module.factory.service.impl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inaing.blackhorse_erp.common.domain.enums.CodeType;
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
 import com.inaing.blackhorse_erp.module.factory.domain.Factory;
@@ -26,7 +27,7 @@ public class FactoryServiceImpl implements IFactoryService {
             throw new AppException(ErrorCode.DUPLICATE_RESOURCE,
                     "Warehouse name already exists" + factory.getName());
         }
-        factory.setCode(this.generateFactoryCode());
+        factory.setCode(CodeGeneratorUtil.generateCode(CodeType.FACTORY));
         return factoryRepository.save(factory);
     }
 
@@ -57,15 +58,4 @@ public class FactoryServiceImpl implements IFactoryService {
         return factoryRepository.findByManagerId(managerId).orElse(null);
     }
 
-    @Override
-    public String generateFactoryCode() {
-        for (int attempt = 0; attempt < 10; attempt++) {
-            String code = CodeGeneratorUtil.generate("FC-", 4);
-
-            if (!factoryRepository.existsByCode(code)) {
-                return code;
-            }
-        }
-        throw new AppException(ErrorCode.IDENTIFIER_ALREADY_EXISTS);
-    }
 }

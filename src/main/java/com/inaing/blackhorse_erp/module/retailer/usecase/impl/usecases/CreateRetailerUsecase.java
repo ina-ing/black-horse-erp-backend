@@ -37,6 +37,9 @@ public class CreateRetailerUsecase {
         Retailer retailer = retailerMapper.toEntity(request);
         retailer.setAssignedSalesman(salesman);
         retailer.setPasswordHash(passwordEncoder.encode(request.password()));
-        return retailerMapper.toResponse(retailerService.create(retailer));
+
+        Retailer createdRetailer = retailerService.create(retailer);
+
+        return retailerMapper.toResponse(createdRetailer);
     }
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.inaing.blackhorse_erp.common.domain.enums.CodeType;
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
 import com.inaing.blackhorse_erp.module.retailer.domain.Retailer;
@@ -31,23 +32,9 @@ public class RetailerServiceImpl implements IRetailerService {
             throw new AppException(ErrorCode.DUPLICATE_PHONE,
                     "Phone number already registered " + retailer.getPhone());
         }
-        retailer.setCode(generateRetailerCode());
+        retailer.setCode(CodeGeneratorUtil.generateCode(CodeType.RETAILER));
         retailer.setJoinedOn(LocalDate.now());
         return retailerRepository.save(retailer);
-    }
-
-    @Override
-    @Transactional
-    public String generateRetailerCode() {
-        for (int attempt = 0; attempt < 10; attempt++) {
-            String code = CodeGeneratorUtil.generate("RET-", 6);
-
-            if (!retailerRepository.existsByCode(code)) {
-                 return code;
-            }
-        }
-
-        throw new AppException(ErrorCode.IDENTIFIER_ALREADY_EXISTS);
     }
 
     @Override
@@ -93,6 +80,18 @@ public class RetailerServiceImpl implements IRetailerService {
             return retailerRepository.findByPhone(identifier).orElse(null);
         }
         return retailerRepository.findByCode(identifier).orElse(null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Retailer> getAssignedRetailers(String assignedSalesmanId) {
+        return retailerRepository.findByAssignedSalesmanId(assignedSalesmanId);
+    }
+
+    @Override
+    @Transactional
+    public Retailer update(Retailer retailer) {
+        return retailerRepository.save(retailer);
     }
 
 }

@@ -14,6 +14,6 @@ public record ProductionOrderResponseDto(
         Instant orderDate,
         Integer totalArticles,
         Integer totalQuantity,
-        List<ProductionOrderItemsResponseDto> items) {
+        List<ProductionOrderItemResponseDto> items) {
 
 }

@@ -31,7 +31,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class BacklogItem extends BaseEntity{
+public class BacklogItem extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -47,5 +47,6 @@ public class BacklogItem extends BaseEntity{
     private ProductVariantSize variantSize;
 
     @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+    @Builder.Default
+    private Integer quantity = 0;
 }

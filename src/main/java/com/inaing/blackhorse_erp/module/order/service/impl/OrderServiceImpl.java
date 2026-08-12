@@ -6,8 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.inaing.blackhorse_erp.common.dto.ErrorCode;
-import com.inaing.blackhorse_erp.exception.exceptions.AppException;
+import com.inaing.blackhorse_erp.common.domain.enums.CodeType;
 import com.inaing.blackhorse_erp.module.order.domain.Order;
 import com.inaing.blackhorse_erp.module.order.repository.OrderRepository;
 import com.inaing.blackhorse_erp.module.order.service.IOrderService;
@@ -25,7 +24,7 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     @Transactional
     public Order create(Order order) {
-        order.setCode(this.generateOrderCode());
+        order.setCode(CodeGeneratorUtil.generateCode(CodeType.ORDER));
         order.setOrderDate(Instant.now());
         return orderRepository.save(order);
     }
@@ -50,18 +49,6 @@ public class OrderServiceImpl implements IOrderService {
     @Transactional
     public Order update(Order order) {
         return orderRepository.save(order);
-    }
-
-    @Override
-    public String generateOrderCode() {
-        for (int attempt = 0; attempt < 10; attempt++) {
-            String code = CodeGeneratorUtil.generate("ORD-", 7);
-
-            if (!orderRepository.existsByCode(code)) {
-                return code;
-            }
-        }
-        throw new AppException(ErrorCode.IDENTIFIER_ALREADY_EXISTS);
     }
 
 }

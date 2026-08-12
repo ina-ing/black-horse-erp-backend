@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inaing.blackhorse_erp.module.employee.domain.Employee;
-import com.inaing.blackhorse_erp.module.employee.dto.EmployeeCreationRequestDto;
 import com.inaing.blackhorse_erp.module.employee.dto.EmployeeResponseDto;
+import com.inaing.blackhorse_erp.module.employee.dto.request.EmployeeCreationRequestDto;
 import com.inaing.blackhorse_erp.module.employee.mapper.EmployeeMapper;
 import com.inaing.blackhorse_erp.module.employee.service.IEmployeeService;
 

@@ -5,7 +5,7 @@ import org.mapstruct.Mapping;
 
 import com.inaing.blackhorse_erp.module.productionOrder.domain.ProductionOrder;
 import com.inaing.blackhorse_erp.module.productionOrder.domain.ProductionOrderItem;
-import com.inaing.blackhorse_erp.module.productionOrder.dto.response.ProductionOrderItemsResponseDto;
+import com.inaing.blackhorse_erp.module.productionOrder.dto.response.ProductionOrderItemResponseDto;
 import com.inaing.blackhorse_erp.module.productionOrder.dto.response.ProductionOrderResponseDto;
 
 @Mapper(componentModel = "spring")
@@ -19,5 +19,5 @@ public interface ProductionOrderMapper {
     @Mapping(target = "variantSizeId", source = "variantSize.id")
     @Mapping(target = "color", source = "variantSize.productVariant.color")
     @Mapping(target = "articleName", source = "variantSize.productVariant.product.name")
-    ProductionOrderItemsResponseDto toItemResponse(ProductionOrderItem item);
+    ProductionOrderItemResponseDto toItemResponse(ProductionOrderItem item);
 }

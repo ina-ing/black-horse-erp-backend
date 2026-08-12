@@ -16,13 +16,16 @@ public enum ErrorCode {
     MALFORMED_REQUEST(400, "Request body is missing or malformed"),
     MISSING_PARAMETER(400, "A required parameter is missing"),
     INVALID_ENUM_VALUE(400, "Request contains an invalid enum value"),
+    INVALID_QUANTITY(400, "Quantity must be greater than zero."),
 
     NOT_FOUND(404, "Resource not found"),
     EMPLOYEE_NOT_FOUND(404, "Employee not found"),
     RETAILER_NOT_FOUND(404, "Retailer not found"),
+    ASSIGNED_SALESMAN_NOT_FOUND(404, "Assigned salesman not found"),
     EMPLOYEE_TYPE_NOT_FOUND(404, "Employee type not found"),
     ROLE_NOT_FOUND(404, "Role not found"),
     ORDER_NOT_FOUND(404, "Order not found"),
+    SUPPLY_NOT_FOUND(404, "Supply not found"),
     PRODUCTION_NOT_FOUND(404, "Production not found"),
     PRODUCTION_ORDER_NOT_FOUND(404, "Production Order not found"),
 
@@ -34,6 +37,7 @@ public enum ErrorCode {
     DUPLICATE_RESOURCE(409, "Resource already exists"),
     BUSINESS_RULE_VIOLATION(409, "Operation violates a business rule"),
     IDENTIFIER_ALREADY_EXISTS(409, "Generated identifier conflicts with an existing resource"),
+    INSUFFICIENT_STOCK(409, "Insufficient stock to fulfill the requested quantity."),
 
     INTERNAL_ERROR(500, "An unexpected error occurred"),
     SERVICE_UNAVAILABLE(503, "Service temporarily unavailable");

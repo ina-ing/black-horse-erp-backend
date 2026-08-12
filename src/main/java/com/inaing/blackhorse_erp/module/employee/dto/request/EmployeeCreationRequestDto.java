@@ -1,4 +1,4 @@
-package com.inaing.blackhorse_erp.module.employee.dto;
+package com.inaing.blackhorse_erp.module.employee.dto.request;
 
 import com.inaing.blackhorse_erp.module.role.domain.Role;
 

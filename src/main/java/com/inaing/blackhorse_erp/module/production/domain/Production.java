@@ -1,6 +1,6 @@
 package com.inaing.blackhorse_erp.module.production.domain;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +57,7 @@ public class Production extends BaseEntity {
 
     @Column(name = "production_date", nullable = false)
     @Builder.Default
-    private LocalDate productionDate = LocalDate.now();
+    private Instant productionDate = Instant.now();
 
     @OneToMany(mappedBy = "production", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

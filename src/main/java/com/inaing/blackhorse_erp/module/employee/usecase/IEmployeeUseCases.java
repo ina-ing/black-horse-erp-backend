@@ -1,8 +1,17 @@
 package com.inaing.blackhorse_erp.module.employee.usecase;
 
-import com.inaing.blackhorse_erp.module.employee.dto.EmployeeCreationRequestDto;
+import java.util.List;
+
 import com.inaing.blackhorse_erp.module.employee.dto.EmployeeResponseDto;
+import com.inaing.blackhorse_erp.module.employee.dto.request.EmployeeCreationRequestDto;
+import com.inaing.blackhorse_erp.module.employee.dto.request.EmployeeUpdateRequestDto;
 
 public interface IEmployeeUseCases {
     EmployeeResponseDto create(EmployeeCreationRequestDto request);
+
+    List<EmployeeResponseDto> getSalesEmployees();
+
+    EmployeeResponseDto getByIdentifier(String identifier);
+
+    EmployeeResponseDto update(String identifier, EmployeeUpdateRequestDto request);
 }

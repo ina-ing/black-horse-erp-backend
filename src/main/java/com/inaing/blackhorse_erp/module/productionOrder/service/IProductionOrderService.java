@@ -14,5 +14,4 @@ public interface IProductionOrderService {
 
     List<ProductionOrder> getAll();
 
-    String generateProductionOrderCode();
 }

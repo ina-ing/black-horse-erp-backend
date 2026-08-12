@@ -1,20 +1,35 @@
 package com.inaing.blackhorse_erp.utils.generators;
 
-import java.security.SecureRandom;
+import java.security.MessageDigest;
+import java.util.Base64;
+import java.util.UUID;
+
+import com.inaing.blackhorse_erp.common.domain.enums.CodeType;
 
 public class CodeGeneratorUtil {
 
-    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private static final SecureRandom RANDOM = new SecureRandom();
+    public static String generateCode(CodeType type) {
+        String uniqueInput = type.name() + System.nanoTime() + UUID.randomUUID();
+        return generateHashedCode(type, uniqueInput);
+    }
 
-    public static String generate(String prefix, int length) {
-        StringBuilder sb = new StringBuilder(prefix);
+    private static String generateHashedCode(CodeType type, String input) {
+        try {
+            // Use SHA-256 for hashing
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(input.getBytes());
 
-        for (int i = 0; i < length; i++) {
-            sb.append(CHARACTERS.charAt(RANDOM.nextInt(CHARACTERS.length())));
+            // Convert to URL-safe Base64 and remove non-alphanumeric chars
+            String encoded = Base64.getUrlEncoder()
+                    .withoutPadding()
+                    .encodeToString(hash)
+                    .replaceAll("[^A-Z0-9]", "")
+                    .substring(0, type.getLength());
+
+            return type.getPrefix() + "-" + encoded;
+        } catch (Exception e) {
+            throw new RuntimeException("Code generation failed", e);
         }
-
-        return sb.toString();
     }
 
 }

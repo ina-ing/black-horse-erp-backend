@@ -1,10 +1,14 @@
 package com.inaing.blackhorse_erp.module.production.usecase.impl.usecases;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
+import com.inaing.blackhorse_erp.module.backlog.service.IBacklogService;
 import com.inaing.blackhorse_erp.module.factory.domain.Factory;
 import com.inaing.blackhorse_erp.module.factory.service.IFactoryService;
 import com.inaing.blackhorse_erp.module.product.domain.ProductVariantSize;
@@ -27,6 +31,7 @@ public class CreateProductionUsecase {
     private final IFactoryService factoryService;
     private final IProductionService productionService;
     private final IProductVariantSizeService productVariantSizeService;
+    private final IBacklogService productionBacklogService;
 
     @Transactional
     public ProductionResponseDto execute(ProductionRequestDto request) {
@@ -40,6 +45,7 @@ public class CreateProductionUsecase {
                 .factory(factory)
                 .build();
 
+        Map<ProductVariantSize, Integer> quantities = new LinkedHashMap<>();
         ItemsUtils.mergeItems(request.items()).forEach((variantSizeId, quantity) -> {
             ProductVariantSize variantSize = productVariantSizeService.getById(variantSizeId);
             ProductionItem item = ProductionItem.builder()
@@ -47,8 +53,13 @@ public class CreateProductionUsecase {
                     .quantity(quantity)
                     .build();
             production.addItem(item);
+            quantities.put(variantSize, quantity);
         });
         production.recalculateTotals();
+
+        productionBacklogService.reduceQuantities(factory, quantities);
+        // TODO: increment factory inventory for each production item once inventory module is wired in.
+
         return productionMapper.toResponse(productionService.create(production));
     }
 }

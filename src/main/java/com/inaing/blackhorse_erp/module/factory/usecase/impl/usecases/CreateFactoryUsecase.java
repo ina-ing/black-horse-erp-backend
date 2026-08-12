@@ -27,18 +27,19 @@ public class CreateFactoryUsecase {
     private final IBacklogService productionBacklogService;
 
     @Transactional
-    public FactoryResponseDto execute(FactoryRequestDto request){
+    public FactoryResponseDto execute(FactoryRequestDto request) {
 
         Employee manager = employeeService.getByIdentifier(request.manager());
-        if(manager == null || manager.getRole() != Role.FACTORY){
+        if (manager == null || manager.getRole() != Role.FACTORY) {
             throw new AppException(ErrorCode.EMPLOYEE_NOT_FOUND);
         }
 
         Factory factory = factoryMapper.toEntity(request);
         factory.setManager(manager);
+
         Factory createdFactory = factoryService.create(factory);
         productionBacklogService.create(createdFactory);
-        
+
         return factoryMapper.toResponse(createdFactory);
     }
 }
