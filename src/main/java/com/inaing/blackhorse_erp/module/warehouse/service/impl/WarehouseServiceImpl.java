@@ -1,5 +1,7 @@
 package com.inaing.blackhorse_erp.module.warehouse.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,4 +62,14 @@ public class WarehouseServiceImpl implements IWarehouseService {
         return warehouseRepository.findByManagerId(managerId).orElse(null);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Warehouse getSoleWarehouse() {
+        List<Warehouse> warehouses = warehouseRepository.findAll();
+        if (warehouses.size() != 1) {
+            throw new AppException(ErrorCode.MULTIPLE_WAREHOUSES_NOT_SUPPORTED,
+                    "Expected exactly one warehouse, found: " + warehouses.size());
+        }
+        return warehouses.get(0);
+    }
 }

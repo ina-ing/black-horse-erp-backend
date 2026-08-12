@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.inaing.blackhorse_erp.exception.exceptions.BusinessRuleException;
 import com.inaing.blackhorse_erp.module.employee.domain.Employee;
 import com.inaing.blackhorse_erp.module.employee.service.IEmployeeService;
+import com.inaing.blackhorse_erp.module.inventory.domain.enums.LocationType;
+import com.inaing.blackhorse_erp.module.inventory.service.IInventoryService;
 import com.inaing.blackhorse_erp.module.retailer.domain.Retailer;
 import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerCreationRequestDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.response.RetailerResponseDto;
@@ -20,9 +22,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CreateRetailerUsecase {
 
+    private final RetailerMapper retailerMapper;
     private final IEmployeeService employeeService;
     private final IRetailerService retailerService;
-    private final RetailerMapper retailerMapper;
+    private final IInventoryService inventoryService;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -39,6 +42,7 @@ public class CreateRetailerUsecase {
         retailer.setPasswordHash(passwordEncoder.encode(request.password()));
 
         Retailer createdRetailer = retailerService.create(retailer);
+        inventoryService.createFor(LocationType.RETAILER, createdRetailer.getId());
 
         return retailerMapper.toResponse(createdRetailer);
     }

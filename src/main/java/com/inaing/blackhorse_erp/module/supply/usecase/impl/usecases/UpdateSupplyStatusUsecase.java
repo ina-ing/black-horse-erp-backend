@@ -1,12 +1,19 @@
 package com.inaing.blackhorse_erp.module.supply.usecase.impl.usecases;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
 import com.inaing.blackhorse_erp.exception.exceptions.BusinessRuleException;
+import com.inaing.blackhorse_erp.module.inventory.domain.enums.LocationType;
+import com.inaing.blackhorse_erp.module.inventory.service.IInventoryService;
+import com.inaing.blackhorse_erp.module.product.domain.ProductVariantSize;
 import com.inaing.blackhorse_erp.module.supply.domain.Supply;
+import com.inaing.blackhorse_erp.module.supply.domain.SupplyItem;
 import com.inaing.blackhorse_erp.module.supply.domain.enums.SupplyStatus;
 import com.inaing.blackhorse_erp.module.supply.dto.request.SupplyStatusUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.supply.dto.response.SupplyResponseDto;
@@ -21,6 +28,7 @@ public class UpdateSupplyStatusUsecase {
 
     private final SupplyMapper supplyMapper;
     private final ISupplyService supplyService;
+    private final IInventoryService inventoryService;
 
     @Transactional
     public SupplyResponseDto execute(String identifier, SupplyStatusUpdateRequestDto request) {
@@ -49,7 +57,11 @@ public class UpdateSupplyStatusUsecase {
 
     private void accept(Supply supply) {
         supply.setStatus(SupplyStatus.ACCEPTED);
-        // TODO: increment warehouse inventory for each supply item once inventory module is wired in.
+
+        Map<ProductVariantSize, Integer> quantities = supply.getItems().stream()
+                .collect(Collectors.toMap(SupplyItem::getVariantSize, SupplyItem::getQuantity));
+        inventoryService.transfer(LocationType.FACTORY, supply.getSuppliedBy().getId(), LocationType.WAREHOUSE,
+                supply.getSuppliedTo().getId(), quantities);
     }
 
     private void issue(Supply supply) {

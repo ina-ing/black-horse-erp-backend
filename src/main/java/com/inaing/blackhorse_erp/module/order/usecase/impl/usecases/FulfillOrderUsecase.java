@@ -12,6 +12,8 @@ import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
 import com.inaing.blackhorse_erp.exception.exceptions.BusinessRuleException;
+import com.inaing.blackhorse_erp.module.inventory.domain.enums.LocationType;
+import com.inaing.blackhorse_erp.module.inventory.service.IInventoryService;
 import com.inaing.blackhorse_erp.module.order.domain.Order;
 import com.inaing.blackhorse_erp.module.order.domain.OrderItem;
 import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
@@ -21,7 +23,10 @@ import com.inaing.blackhorse_erp.module.order.dto.response.OrderResponseDto;
 import com.inaing.blackhorse_erp.module.order.mapper.OrderMapper;
 import com.inaing.blackhorse_erp.module.order.service.IOrderService;
 import com.inaing.blackhorse_erp.module.order.service.IOrderStatusHistoryService;
+import com.inaing.blackhorse_erp.module.product.domain.ProductVariantSize;
 import com.inaing.blackhorse_erp.module.role.domain.Role;
+import com.inaing.blackhorse_erp.module.warehouse.domain.Warehouse;
+import com.inaing.blackhorse_erp.module.warehouse.service.IWarehouseService;
 import com.inaing.blackhorse_erp.security.context.AuthPrincipal;
 import com.inaing.blackhorse_erp.security.context.CurrentUserProvider;
 
@@ -31,10 +36,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FulfillOrderUsecase {
 
+        private final OrderMapper orderMapper;
         private final CurrentUserProvider currentUserProvider;
         private final IOrderService orderService;
+        private final IInventoryService inventoryService;
+        private final IWarehouseService warehouseService;
         private final IOrderStatusHistoryService orderStatusHistoryService;
-        private final OrderMapper orderMapper;
 
         @Transactional
         public OrderResponseDto execute(String identifier, OrderFulfillmentRequestDto request) {
@@ -42,6 +49,11 @@ public class FulfillOrderUsecase {
                 Order order = orderService.getByIdentifier(identifier);
                 if (order == null) {
                         throw new AppException(ErrorCode.ORDER_NOT_FOUND);
+                }
+
+                Warehouse warehouse = warehouseService.getSoleWarehouse();
+                if (warehouse == null) {
+                        throw new AppException(ErrorCode.NOT_FOUND, "No warehouse found");
                 }
 
                 if (order.getStatus() != OrderStatus.PROCESSING && order.getStatus() != OrderStatus.PARTIAL) {
@@ -65,6 +77,7 @@ public class FulfillOrderUsecase {
                                                 Function.identity()));
 
                 Map<String, Integer> projectedFulfilled = new HashMap<>();
+                Map<ProductVariantSize, Integer> transferQuantities = new HashMap<>();
 
                 for (OrderItemRequestDto line : request.items()) {
                         OrderItem item = itemsBySku.get(line.variantSizeId());
@@ -85,8 +98,12 @@ public class FulfillOrderUsecase {
                                                                 + item.getVariantSize().getId());
                         }
                         projectedFulfilled.put(line.variantSizeId(), updated);
+                        transferQuantities.put(item.getVariantSize(), line.quantity());
                 }
-
+                inventoryService.transfer(
+                                LocationType.WAREHOUSE, principal.id(),
+                                LocationType.RETAILER, warehouse.getId(),
+                                transferQuantities);
                 projectedFulfilled.forEach(
                                 (variantSizeId, fulfilledQuantity) -> itemsBySku.get(variantSizeId)
                                                 .setFulfilledQuantity(fulfilledQuantity));

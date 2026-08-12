@@ -11,4 +11,6 @@ public interface IWarehouseService {
     Warehouse getByIdentifier(String identifier);
 
     Warehouse getByManagerId(String managerId);
+
+    Warehouse getSoleWarehouse();
 }

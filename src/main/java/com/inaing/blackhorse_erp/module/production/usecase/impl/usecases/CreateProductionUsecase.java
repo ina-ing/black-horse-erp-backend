@@ -11,6 +11,8 @@ import com.inaing.blackhorse_erp.exception.exceptions.AppException;
 import com.inaing.blackhorse_erp.module.backlog.service.IBacklogService;
 import com.inaing.blackhorse_erp.module.factory.domain.Factory;
 import com.inaing.blackhorse_erp.module.factory.service.IFactoryService;
+import com.inaing.blackhorse_erp.module.inventory.domain.enums.LocationType;
+import com.inaing.blackhorse_erp.module.inventory.service.IInventoryService;
 import com.inaing.blackhorse_erp.module.product.domain.ProductVariantSize;
 import com.inaing.blackhorse_erp.module.product.service.IProductVariantSizeService;
 import com.inaing.blackhorse_erp.module.production.domain.Production;
@@ -32,6 +34,7 @@ public class CreateProductionUsecase {
     private final IProductionService productionService;
     private final IProductVariantSizeService productVariantSizeService;
     private final IBacklogService productionBacklogService;
+    private final IInventoryService inventoryService;
 
     @Transactional
     public ProductionResponseDto execute(ProductionRequestDto request) {
@@ -58,7 +61,7 @@ public class CreateProductionUsecase {
         production.recalculateTotals();
 
         productionBacklogService.reduceQuantities(factory, quantities);
-        // TODO: increment factory inventory for each production item once inventory module is wired in.
+        inventoryService.credit(LocationType.FACTORY, factory.getId(), quantities);
 
         return productionMapper.toResponse(productionService.create(production));
     }

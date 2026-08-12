@@ -28,6 +28,8 @@ public enum ErrorCode {
     SUPPLY_NOT_FOUND(404, "Supply not found"),
     PRODUCTION_NOT_FOUND(404, "Production not found"),
     PRODUCTION_ORDER_NOT_FOUND(404, "Production Order not found"),
+    INVENTORY_NOT_FOUND(404, "Inventory not found"),
+    INVENTORY_ITEM_NOT_FOUND(404, "Inventory item not found"),
 
     ORDER_UPDATE_DENIED(403, "Access denied. You are not authorized to update this order."),
     RETURN_UPDATE_DENIED(403, "Access denied. You are not authorized to update this return."),
@@ -38,6 +40,7 @@ public enum ErrorCode {
     BUSINESS_RULE_VIOLATION(409, "Operation violates a business rule"),
     IDENTIFIER_ALREADY_EXISTS(409, "Generated identifier conflicts with an existing resource"),
     INSUFFICIENT_STOCK(409, "Insufficient stock to fulfill the requested quantity."),
+    MULTIPLE_WAREHOUSES_NOT_SUPPORTED(409, "Multiple warehouses not supported."),
 
     INTERNAL_ERROR(500, "An unexpected error occurred"),
     SERVICE_UNAVAILABLE(503, "Service temporarily unavailable");

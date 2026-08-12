@@ -24,6 +24,11 @@ public class BacklogServiceImpl implements IBacklogService {
     @Override
     @Transactional
     public Backlog create(Factory factory) {
+
+        if (backlogRepository.existsByFactoryId(factory.getId())) {
+            throw new AppException(ErrorCode.DUPLICATE_RESOURCE,
+                    "Backlog already exists for " + factory.getId());
+        }
         Backlog backlog = Backlog.builder()
                 .factory(factory)
                 .build();

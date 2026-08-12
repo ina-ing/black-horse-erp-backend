@@ -13,6 +13,8 @@ import com.inaing.blackhorse_erp.module.factory.dto.request.FactoryRequestDto;
 import com.inaing.blackhorse_erp.module.factory.dto.response.FactoryResponseDto;
 import com.inaing.blackhorse_erp.module.factory.mapper.FactoryMapper;
 import com.inaing.blackhorse_erp.module.factory.service.IFactoryService;
+import com.inaing.blackhorse_erp.module.inventory.domain.enums.LocationType;
+import com.inaing.blackhorse_erp.module.inventory.service.IInventoryService;
 import com.inaing.blackhorse_erp.module.role.domain.Role;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class CreateFactoryUsecase {
     private final FactoryMapper factoryMapper;
     private final IFactoryService factoryService;
     private final IEmployeeService employeeService;
+    private final IInventoryService inventoryService;
     private final IBacklogService productionBacklogService;
 
     @Transactional
@@ -40,6 +43,7 @@ public class CreateFactoryUsecase {
         Factory createdFactory = factoryService.create(factory);
         productionBacklogService.create(createdFactory);
 
+        inventoryService.createFor(LocationType.FACTORY, createdFactory.getId());
         return factoryMapper.toResponse(createdFactory);
     }
 }
