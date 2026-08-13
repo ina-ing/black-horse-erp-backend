@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/api/v1/retailer")
@@ -60,7 +61,7 @@ public class RetailerController {
         return ApiResponse.ok(retailerUsecase.getAssignedRetailers());
     }
 
-    @PatchMapping("/{identifier}")
+    @PutMapping("/{identifier}")
     @PreAuthorize("hasAnyRole('ADMIN','SALES')")
     public ApiResponse<RetailerResponseDto> update(@PathVariable String identifier,
             @Valid @RequestBody RetailerUpdateRequestDto request) {

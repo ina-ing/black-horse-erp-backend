@@ -25,7 +25,7 @@ public class FactoryServiceImpl implements IFactoryService {
     public Factory create(Factory factory) {
         if (factoryRepository.existsByName(factory.getName())) {
             throw new AppException(ErrorCode.DUPLICATE_RESOURCE,
-                    "Warehouse name already exists" + factory.getName());
+                    "Factory name already exists" + factory.getName());
         }
         factory.setCode(CodeGeneratorUtil.generateCode(CodeType.FACTORY));
         return factoryRepository.save(factory);

@@ -6,6 +6,7 @@ import org.mapstruct.MappingTarget;
 
 import com.inaing.blackhorse_erp.module.warehouse.domain.Warehouse;
 import com.inaing.blackhorse_erp.module.warehouse.dto.request.WarehouseRequestDto;
+import com.inaing.blackhorse_erp.module.warehouse.dto.request.WarehouseUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.warehouse.dto.response.WarehouseResponseDto;
 
 @Mapper(componentModel = "spring")
@@ -30,5 +31,5 @@ public interface WarehouseMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "deleted", ignore = true)
-    void updateEntity(WarehouseRequestDto request, @MappingTarget Warehouse warehouse);
+    void updateEntity(WarehouseUpdateRequestDto request, @MappingTarget Warehouse warehouse);
 }

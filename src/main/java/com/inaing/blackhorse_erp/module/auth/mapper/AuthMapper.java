@@ -14,6 +14,7 @@ public interface AuthMapper {
     @Mapping(target = "name", source = "fullname")
     EmployeeLoginResponseDto toEmployeeLoginResponseDto(Employee employee);
 
-    @Mapping(target = "role", constant = "CUSTOMER")
+    @Mapping(target = "role", constant = "RETAILER")
+    @Mapping(target = "assignedSalesman", source = "assignedSalesman.code")
     RetailerLoginResponseDto toRetailerLoginResponseDto(Retailer retailer);
 }

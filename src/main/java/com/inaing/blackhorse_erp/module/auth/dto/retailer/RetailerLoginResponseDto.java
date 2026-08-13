@@ -7,6 +7,7 @@ public record RetailerLoginResponseDto(
         String phone,
         String contactPerson,
         String panNumber,
+        String assignedSalesman,
         String role) {
 
 }

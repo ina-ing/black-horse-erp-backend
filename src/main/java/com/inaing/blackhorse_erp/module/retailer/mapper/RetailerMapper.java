@@ -14,6 +14,7 @@ import com.inaing.blackhorse_erp.module.retailer.dto.response.RetailerResponseDt
 @Mapper(componentModel = "spring")
 public interface RetailerMapper {
 
+    @Mapping(target = "assignedSalesman", source = "assignedSalesman.code")
     RetailerResponseDto toResponse(Retailer retailer);
 
     @Mapping(target = "passwordHash", source = "password")

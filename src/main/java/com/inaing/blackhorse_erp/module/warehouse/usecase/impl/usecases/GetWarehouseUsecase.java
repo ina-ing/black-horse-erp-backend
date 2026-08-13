@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
 import com.inaing.blackhorse_erp.module.warehouse.domain.Warehouse;
+import com.inaing.blackhorse_erp.module.warehouse.dto.response.WarehouseResponseDto;
+import com.inaing.blackhorse_erp.module.warehouse.mapper.WarehouseMapper;
 import com.inaing.blackhorse_erp.module.warehouse.service.IWarehouseService;
 
 import lombok.RequiredArgsConstructor;
@@ -14,16 +16,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GetWarehouseUsecase {
 
+    private final WarehouseMapper warehouseMapper;
     private final IWarehouseService warehouseService;
 
     @Transactional(readOnly = true)
-    public Warehouse execute(String identifier) {
+    public WarehouseResponseDto execute(String identifier) {
 
         Warehouse warehouse = warehouseService.getByIdentifier(identifier);
         if (warehouse == null) {
             throw new AppException(ErrorCode.NOT_FOUND, "Warehouse not found " + identifier);
         }
 
-        return warehouse;
+        return warehouseMapper.toResponse(warehouse);
     }
 }

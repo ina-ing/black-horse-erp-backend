@@ -6,6 +6,7 @@ import org.mapstruct.MappingTarget;
 
 import com.inaing.blackhorse_erp.module.factory.domain.Factory;
 import com.inaing.blackhorse_erp.module.factory.dto.request.FactoryRequestDto;
+import com.inaing.blackhorse_erp.module.factory.dto.request.FactoryUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.factory.dto.response.FactoryResponseDto;
 
 @Mapper(componentModel = "spring")
@@ -30,5 +31,5 @@ public interface FactoryMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "deleted", ignore = true)
-    void updateEntity(FactoryRequestDto request, @MappingTarget Factory factory);
+    void updateEntity(FactoryUpdateRequestDto request, @MappingTarget Factory factory);
 }

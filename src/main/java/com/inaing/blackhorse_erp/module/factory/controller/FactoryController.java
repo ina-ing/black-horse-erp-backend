@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inaing.blackhorse_erp.common.dto.ApiResponse;
 import com.inaing.blackhorse_erp.module.factory.dto.request.FactoryRequestDto;
+import com.inaing.blackhorse_erp.module.factory.dto.request.FactoryUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.factory.dto.response.FactoryResponseDto;
 import com.inaing.blackhorse_erp.module.factory.usecase.IFactoryUsecases;
 
@@ -37,7 +38,7 @@ public class FactoryController {
     @PutMapping("/{identifier}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ApiResponse<FactoryResponseDto> update(@PathVariable String identifier,
-            @Valid @RequestBody FactoryRequestDto request) {
+            @Valid @RequestBody FactoryUpdateRequestDto request) {
         return ApiResponse.ok("Factory updated", factoryUsecases.update(identifier, request));
     }
 

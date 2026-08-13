@@ -13,10 +13,15 @@ public interface WarehouseRepository extends JpaRepository<Warehouse, String> {
 
     boolean existsByCode(String code);
 
-    @EntityGraph(attributePaths = {"manager"})
+    @EntityGraph(attributePaths = { "manager" })
+    Optional<Warehouse> findById(String identifier);
+
+    @EntityGraph(attributePaths = { "manager" })
     Optional<Warehouse> findByCode(String identifier);
 
+    @EntityGraph(attributePaths = { "manager" })
     Optional<Warehouse> findByName(String name);
 
+    @EntityGraph(attributePaths = { "manager" })
     Optional<Warehouse> findByManagerId(String id);
 }

@@ -5,10 +5,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inaing.blackhorse_erp.common.dto.ApiResponse;
-import com.inaing.blackhorse_erp.module.warehouse.domain.Warehouse;
 import com.inaing.blackhorse_erp.module.warehouse.dto.request.WarehouseRequestDto;
+import com.inaing.blackhorse_erp.module.warehouse.dto.request.WarehouseUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.warehouse.dto.response.WarehouseResponseDto;
-import com.inaing.blackhorse_erp.module.warehouse.service.IWarehouseService;
 import com.inaing.blackhorse_erp.module.warehouse.usecase.IWarehouseUsecases;
 
 import jakarta.validation.Valid;
@@ -16,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +27,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class WarehouseController {
 
     private final IWarehouseUsecases warehouseUsecases;
-    private final IWarehouseService warehouseService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -41,17 +38,13 @@ public class WarehouseController {
     @PutMapping("/{identifier}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ApiResponse<WarehouseResponseDto> update(@PathVariable String identifier,
-            @Valid @RequestBody WarehouseRequestDto request) {
+            @Valid @RequestBody WarehouseUpdateRequestDto request) {
         return ApiResponse.ok("Warehouse updated", warehouseUsecases.update(identifier, request));
     }
 
-    // @GetMapping("/{identifier}")
-    // public ApiResponse<WarehouseResponseDto> getByIdentifier(@PathVariable String identifier) {
-    //     return ApiResponse.ok(warehouseUsecases.getByIdentifier(identifier));
-    // }
-
     @GetMapping("/{identifier}")
-    public ApiResponse<Warehouse> getByIdentifier(@PathVariable String identifier) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'FACTORY', 'WAREHOUSE')")
+    public ApiResponse<WarehouseResponseDto> getByIdentifier(@PathVariable String identifier) {
         return ApiResponse.ok(warehouseUsecases.getByIdentifier(identifier));
     }
 }

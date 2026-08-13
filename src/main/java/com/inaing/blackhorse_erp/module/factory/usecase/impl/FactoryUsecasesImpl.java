@@ -3,6 +3,7 @@ package com.inaing.blackhorse_erp.module.factory.usecase.impl;
 import org.springframework.stereotype.Component;
 
 import com.inaing.blackhorse_erp.module.factory.dto.request.FactoryRequestDto;
+import com.inaing.blackhorse_erp.module.factory.dto.request.FactoryUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.factory.dto.response.FactoryResponseDto;
 import com.inaing.blackhorse_erp.module.factory.usecase.IFactoryUsecases;
 import com.inaing.blackhorse_erp.module.factory.usecase.impl.usecases.CreateFactoryUsecase;
@@ -25,7 +26,7 @@ public class FactoryUsecasesImpl implements IFactoryUsecases {
     }
 
     @Override
-    public FactoryResponseDto update(String identifier, FactoryRequestDto request) {
+    public FactoryResponseDto update(String identifier, FactoryUpdateRequestDto request) {
        return updateFactoryUsecase.execute(identifier, request);
     }
 

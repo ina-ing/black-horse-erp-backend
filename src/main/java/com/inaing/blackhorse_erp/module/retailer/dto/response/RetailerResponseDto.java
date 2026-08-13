@@ -18,6 +18,7 @@ public record RetailerResponseDto(
         Province province,
         BusinessType businessType,
         BusinessMedium businessMedium,
+        String assignedSalesman,
         LocalDate joinedOn) {
 
 }

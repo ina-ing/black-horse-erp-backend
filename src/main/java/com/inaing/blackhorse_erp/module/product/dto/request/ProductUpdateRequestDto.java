@@ -1,5 +1,7 @@
 package com.inaing.blackhorse_erp.module.product.dto.request;
 
+import java.util.List;
+
 import com.inaing.blackhorse_erp.module.product.domain.enums.Gender;
 import com.inaing.blackhorse_erp.module.product.domain.enums.ProductStatus;
 import com.inaing.blackhorse_erp.module.product.domain.enums.SizeSystem;
@@ -7,6 +9,7 @@ import com.inaing.blackhorse_erp.module.product.dto.response.MaterialDto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -17,6 +20,7 @@ public record ProductUpdateRequestDto(
         @NotNull Gender gender,
         @NotNull SizeSystem sizeSystem,
         @NotNull ProductStatus status,
-        @NotNull @Valid MaterialDto material) {
+        @NotNull @Valid MaterialDto material,
+        @Valid @NotEmpty(message = "At least one variant is required") List<ProductVariantUpdateRequestDto> variants) {
 
 }

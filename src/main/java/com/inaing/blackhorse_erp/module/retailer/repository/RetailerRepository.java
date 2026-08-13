@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.inaing.blackhorse_erp.module.retailer.domain.Retailer;
@@ -19,6 +20,7 @@ public interface RetailerRepository extends JpaRepository<Retailer, String> {
 
     boolean existsByCode(String code);
 
+    @EntityGraph(attributePaths = {"assignedSalesman"})
     List<Retailer> findByAssignedSalesmanId(String salesmanId);
 
     long countByJoinedOnBetween(LocalDate start, LocalDate end);

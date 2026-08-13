@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.inaing.blackhorse_erp.module.warehouse.domain.Warehouse;
 import com.inaing.blackhorse_erp.module.warehouse.dto.request.WarehouseRequestDto;
+import com.inaing.blackhorse_erp.module.warehouse.dto.request.WarehouseUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.warehouse.dto.response.WarehouseResponseDto;
 import com.inaing.blackhorse_erp.module.warehouse.usecase.IWarehouseUsecases;
 import com.inaing.blackhorse_erp.module.warehouse.usecase.impl.usecases.CreateWarehouseUsecase;
@@ -26,12 +27,12 @@ public class WarehouseUsecasesImpl implements IWarehouseUsecases {
     }
 
     @Override
-    public WarehouseResponseDto update(String identifier, WarehouseRequestDto request) {
+    public WarehouseResponseDto update(String identifier, WarehouseUpdateRequestDto request) {
         return updateWarehouseUsecase.execute(identifier, request);
     }
 
     @Override
-    public Warehouse getByIdentifier(String identifier) {
+    public WarehouseResponseDto getByIdentifier(String identifier) {
         return getWarehouseUsecase.execute(identifier);
     }
 

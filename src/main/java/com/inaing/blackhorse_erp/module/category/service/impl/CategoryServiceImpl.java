@@ -1,5 +1,7 @@
 package com.inaing.blackhorse_erp.module.category.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +41,27 @@ public class CategoryServiceImpl implements ICategoryService {
         }
         category.setIdentifier(identifier);
         return categoryRepository.save(category);
+    }
+
+    @Override
+    @Transactional
+    public Category update(Category category) {
+        String identifier = StringUtils.generateIdentifier(category.getName());
+
+        categoryRepository.findByNameIgnoreCaseOrIdentifierIgnoreCase(category.getName(), identifier)
+                .filter(existing -> !existing.getId().equals(category.getId()))
+                .ifPresent(existing -> {
+                    throw new AppException(ErrorCode.DUPLICATE_RESOURCE,
+                            "Category already exists " + category.getName());
+                });
+
+        category.setIdentifier(identifier);
+        return categoryRepository.save(category);
+    }
+
+    @Override
+    public List<Category> getAll() {
+        return categoryRepository.findAll();
     }
 
 }
