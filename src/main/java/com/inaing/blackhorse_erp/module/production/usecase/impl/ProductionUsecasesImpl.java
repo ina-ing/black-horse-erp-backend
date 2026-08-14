@@ -9,6 +9,7 @@ import com.inaing.blackhorse_erp.module.production.dto.response.ProductionRespon
 import com.inaing.blackhorse_erp.module.production.usecase.IProductionUsecases;
 import com.inaing.blackhorse_erp.module.production.usecase.impl.usecases.CreateProductionUsecase;
 import com.inaing.blackhorse_erp.module.production.usecase.impl.usecases.GetAllProductionUsecase;
+import com.inaing.blackhorse_erp.module.production.usecase.impl.usecases.GetFactoryProductionUsecase;
 import com.inaing.blackhorse_erp.module.production.usecase.impl.usecases.GetProductionUsecase;
 import com.inaing.blackhorse_erp.module.production.usecase.impl.usecases.UpdateProductionUsecase;
 
@@ -21,6 +22,7 @@ public class ProductionUsecasesImpl implements IProductionUsecases {
     private final CreateProductionUsecase createProductionUsecase;
     private final GetProductionUsecase getProductionUsecase;
     private final GetAllProductionUsecase getAllProductionUsecase;
+    private final GetFactoryProductionUsecase getFactoryProductionUsecase;
     private final UpdateProductionUsecase updateProductionUsecase;
 
     @Override
@@ -36,6 +38,11 @@ public class ProductionUsecasesImpl implements IProductionUsecases {
     @Override
     public List<ProductionResponseDto> getAll() {
         return getAllProductionUsecase.execute();
+    }
+
+    @Override
+    public List<ProductionResponseDto> getByFactoryId(String factoryId) {
+        return getFactoryProductionUsecase.execute(factoryId);
     }
 
     @Override

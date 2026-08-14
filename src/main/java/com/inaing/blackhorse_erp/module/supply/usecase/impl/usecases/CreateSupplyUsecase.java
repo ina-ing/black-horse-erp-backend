@@ -1,5 +1,8 @@
 package com.inaing.blackhorse_erp.module.supply.usecase.impl.usecases;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -7,6 +10,8 @@ import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
 import com.inaing.blackhorse_erp.module.factory.domain.Factory;
 import com.inaing.blackhorse_erp.module.factory.service.IFactoryService;
+import com.inaing.blackhorse_erp.module.inventory.domain.enums.LocationType;
+import com.inaing.blackhorse_erp.module.inventory.service.IInventoryService;
 import com.inaing.blackhorse_erp.module.product.domain.ProductVariantSize;
 import com.inaing.blackhorse_erp.module.product.service.IProductVariantSizeService;
 import com.inaing.blackhorse_erp.module.supply.domain.Supply;
@@ -30,6 +35,7 @@ public class CreateSupplyUsecase {
     private final IFactoryService factoryService;
     private final IWarehouseService warehouseService;
     private final IProductVariantSizeService productVariantSizeService;
+    private final IInventoryService inventoryService;
 
     @Transactional
     public SupplyResponseDto execute(SupplyCreationRequestDto request) {
@@ -43,12 +49,19 @@ public class CreateSupplyUsecase {
             throw new AppException(ErrorCode.NOT_FOUND, "Factory not found " + request.suppliedBy());
         }
 
+        Map<ProductVariantSize, Integer> quantitiesByVariant = new LinkedHashMap<>();
+        ItemsUtils.mergeItems(request.items()).forEach((variantSizeId, quantity) -> {
+            ProductVariantSize variantSize = productVariantSizeService.getById(variantSizeId);
+            quantitiesByVariant.put(variantSize, quantity);
+        });
+
+        inventoryService.debit(LocationType.FACTORY, factory.getId(), quantitiesByVariant);
+
         Supply supply = Supply.builder()
                 .suppliedTo(warehouse)
                 .suppliedBy(factory)
                 .build();
-        ItemsUtils.mergeItems(request.items()).forEach((variantSizeId, quantity) -> {
-            ProductVariantSize variantSize = productVariantSizeService.getById(variantSizeId);
+        quantitiesByVariant.forEach((variantSize, quantity) -> {
             SupplyItem item = SupplyItem.builder()
                     .variantSize(variantSize)
                     .quantity(quantity)

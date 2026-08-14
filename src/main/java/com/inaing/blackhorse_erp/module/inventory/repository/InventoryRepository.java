@@ -2,6 +2,7 @@ package com.inaing.blackhorse_erp.module.inventory.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.inaing.blackhorse_erp.module.inventory.domain.Inventory;
@@ -11,6 +12,7 @@ public interface InventoryRepository extends JpaRepository<Inventory, String> {
 
     boolean existsByReference(String id);
 
+    @EntityGraph(attributePaths = {"items.variantSize.productVariant.product"})
     Optional<Inventory> findByLocationTypeAndReference(LocationType locationType, String reference);
 
     boolean existsByLocationTypeAndReference(LocationType locationType, String reference);

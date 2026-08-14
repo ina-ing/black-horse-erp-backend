@@ -13,4 +13,6 @@ public interface IProductionService {
     Production getByIdentifier(String identifier);
 
     List<Production> getAll();
+
+    List<Production> getByFactoryId(String factoryId);
 }

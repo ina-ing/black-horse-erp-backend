@@ -12,12 +12,12 @@ public interface OrderRepository extends JpaRepository<Order, String> {
 
     boolean existsByCode(String code);
 
-    @EntityGraph(attributePaths = { "items", "items.variantSize", "retailer", "handledBy" })
+    @EntityGraph(attributePaths = { "items.variantSize.productVariant.product", "retailer", "handledBy" })
     Optional<Order> findByCode(String code);
 
-    @EntityGraph(attributePaths = { "items", "items.variantSize", "retailer", "handledBy" })
+    @EntityGraph(attributePaths = { "items.variantSize.productVariant.product", "retailer", "handledBy" })
     Optional<Order> findById(String id);
 
-     @EntityGraph(attributePaths = {"items", "items.variantSize", "retailer", "handledBy"})
+    @EntityGraph(attributePaths = { "items.variantSize.productVariant.product", "retailer", "handledBy" })
     List<Order> findAllBy();
 }

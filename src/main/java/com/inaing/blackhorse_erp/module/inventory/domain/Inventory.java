@@ -54,7 +54,7 @@ public class Inventory extends BaseEntity {
     @OneToMany(mappedBy = "inventory", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<InventoryItem> items = new ArrayList<>();
-
+ 
     /**
      * Lazily-built, per-instance lookup cache keyed by variant size id.
      * Never persisted (@Transient) — rebuilt once on first access after

@@ -13,5 +13,7 @@ public interface IProductionUsecases {
 
     List<ProductionResponseDto> getAll();
 
+    List<ProductionResponseDto> getByFactoryId(String factoryId);
+
     ProductionResponseDto update(String identifier, ProductionRequestDto request);
 }

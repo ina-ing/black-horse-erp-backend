@@ -3,6 +3,7 @@ package com.inaing.blackhorse_erp.module.retailer.usecase.impl.usecases;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
@@ -22,6 +23,7 @@ public class GetAssignedRetailersUsecase {
     private final IRetailerService retailerService;
     private final CurrentUserProvider currentUserProvider;
 
+    @Transactional(readOnly = true)
     public List<RetailerResponseDto> execute() {
         AuthPrincipal principal = currentUserProvider.currentPrincipal()
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));

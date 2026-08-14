@@ -66,7 +66,8 @@ public class InventoryServiceImpl implements IInventoryService {
     @Override
     @Transactional(readOnly = true)
     public Inventory getByLocation(LocationType locationType, String reference) {
-        return findInventoryOrThrow(locationType, reference);
+        return inventoryRepository.findByLocationTypeAndReference(locationType, reference)
+                .orElse(null);
     }
 
     @Override

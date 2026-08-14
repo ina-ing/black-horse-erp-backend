@@ -47,4 +47,10 @@ public class ProductionServiceImpl implements IProductionService {
     public List<Production> getAll() {
         return productionRepository.findAll();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Production> getByFactoryId(String factoryId) {
+        return productionRepository.findByFactoryId(factoryId);
+    }
 }

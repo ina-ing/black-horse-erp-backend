@@ -2,7 +2,6 @@ package com.inaing.blackhorse_erp.module.warehouse.usecase.impl;
 
 import org.springframework.stereotype.Component;
 
-import com.inaing.blackhorse_erp.module.warehouse.domain.Warehouse;
 import com.inaing.blackhorse_erp.module.warehouse.dto.request.WarehouseRequestDto;
 import com.inaing.blackhorse_erp.module.warehouse.dto.request.WarehouseUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.warehouse.dto.response.WarehouseResponseDto;

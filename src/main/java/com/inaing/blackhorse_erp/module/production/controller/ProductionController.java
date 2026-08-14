@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
+
 @RestController
 @RequestMapping("/api/v1/production")
 @RequiredArgsConstructor
@@ -48,6 +49,11 @@ public class ProductionController {
         return ApiResponse.ok(productionUsecases.getAll());
     }
 
+    @GetMapping("/factory/{identifier}")
+    public ApiResponse<List<ProductionResponseDto>> getByFactory(@PathVariable String identifier) {
+        return ApiResponse.ok(productionUsecases.getByFactoryId(identifier));
+    }
+    
     @PutMapping("/{identifier}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ApiResponse<ProductionResponseDto> update(@PathVariable String identifier,

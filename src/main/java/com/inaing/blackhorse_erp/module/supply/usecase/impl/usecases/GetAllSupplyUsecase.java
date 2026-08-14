@@ -17,7 +17,7 @@ public class GetAllSupplyUsecase {
     private final SupplyMapper supplyMapper;
     private final ISupplyService supplyService;
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) 
     public List<SupplyResponseDto> execute() {
         return supplyService.getAll()
                 .stream()

@@ -2,6 +2,7 @@ package com.inaing.blackhorse_erp.module.supply.domain;
 
 import org.hibernate.annotations.SQLRestriction;
 
+import com.inaing.blackhorse_erp.common.domain.BaseEntity;
 import com.inaing.blackhorse_erp.module.product.domain.ProductVariantSize;
 
 import jakarta.persistence.Column;
@@ -30,7 +31,7 @@ import lombok.Setter;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class SupplyItem {
+public class SupplyItem extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

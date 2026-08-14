@@ -99,7 +99,7 @@ public class UpdateProductUsecase {
                 .forEach(size -> variant.addSize(ProductVariantSize.builder()
                         .size(size)
                         .sku(buildSku(product.getArticleCode(), variant.getColor(), size))
-                        .build()));
+                    .build()));
     }
 
     private String buildSku(String articleCode, String color, String size) {
