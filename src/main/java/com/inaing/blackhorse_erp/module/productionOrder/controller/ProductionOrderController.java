@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 
-
 @RestController
 @RequestMapping("/api/v1/production-order")
 @RequiredArgsConstructor
@@ -32,6 +31,7 @@ public class ProductionOrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('WAREHOUSE')")
     public ApiResponse<ProductionOrderResponseDto> create(
             @Valid @RequestBody ProductionOrderCreationRequestDto request) {
         return ApiResponse.created("Production order created", productionOrderUsecases.create(request));
@@ -44,14 +44,15 @@ public class ProductionOrderController {
     }
 
     @GetMapping("/{identifier}")
+    @PreAuthorize("hasAnyRole('FACTORY', 'ADMIN', 'WAREHOUSE')")
     public ApiResponse<ProductionOrderResponseDto> getByIdentifier(@PathVariable String identifier) {
         return ApiResponse.ok(productionOrderUsecases.getByIdentifier(identifier));
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('FACTORY', 'ADMIN')")
     public ApiResponse<List<ProductionOrderResponseDto>> getAll() {
         return ApiResponse.ok(productionOrderUsecases.getAll());
     }
-    
 
 }

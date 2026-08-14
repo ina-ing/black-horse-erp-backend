@@ -9,6 +9,7 @@ import com.inaing.blackhorse_erp.module.order.domain.Order;
 import com.inaing.blackhorse_erp.module.order.domain.OrderItem;
 import com.inaing.blackhorse_erp.module.order.domain.OrderStatusHistory;
 import com.inaing.blackhorse_erp.module.order.dto.response.OrderItemsResponseDto;
+import com.inaing.blackhorse_erp.module.order.dto.response.OrderListResponseDto;
 import com.inaing.blackhorse_erp.module.order.dto.response.OrderResponseDto;
 import com.inaing.blackhorse_erp.module.order.dto.response.OrderStatusHistoryResponseDto;
 import com.inaing.blackhorse_erp.module.order.dto.response.OrderWithStatusHistoryResponseDto;
@@ -19,6 +20,10 @@ public interface OrderMapper {
     @Mapping(target = "retailer", source = "retailer.storeName")
     @Mapping(target = "handledBy", source = "handledBy.fullname")
     OrderResponseDto toResponse(Order order);
+  
+    @Mapping(target = "retailer", source = "retailer.storeName")
+    @Mapping(target = "handledBy", source = "handledBy.fullname")
+    OrderListResponseDto toListResponse(Order order);
 
     @Mapping(target = "retailer", source = "order.retailer.storeName")
     @Mapping(target = "handledBy", source = "order.handledBy.fullname")

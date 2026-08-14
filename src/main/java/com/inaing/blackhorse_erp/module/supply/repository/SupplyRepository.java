@@ -18,6 +18,6 @@ public interface SupplyRepository extends JpaRepository<Supply, String> {
     @EntityGraph(attributePaths = { "items.variantSize.productVariant.product", "suppliedBy", "suppliedTo" })
     Optional<Supply> findById(String id);
 
-    // @EntityGraph(attributePaths = { "items.variantSize.productVariant.product", "suppliedBy", "suppliedTo" })
-    // List<Supply> findAll();
+    @EntityGraph(attributePaths = { "items.variantSize.productVariant.product", "suppliedBy", "suppliedTo" })
+    List<Supply> findAll();
 }

@@ -9,6 +9,7 @@ import com.inaing.blackhorse_erp.module.order.dto.request.OrderCreationRequestDt
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderFulfillmentRequestDto;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderStatusUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderUpdateRequestDto;
+import com.inaing.blackhorse_erp.module.order.dto.response.OrderListResponseDto;
 import com.inaing.blackhorse_erp.module.order.dto.response.OrderResponseDto;
 import com.inaing.blackhorse_erp.module.order.dto.response.OrderWithStatusHistoryResponseDto;
 import com.inaing.blackhorse_erp.module.order.usecase.IOrderUsecases;
@@ -44,7 +45,7 @@ public class OrderController {
     }
 
     @GetMapping
-    public ApiResponse<List<OrderResponseDto>> getAll() {
+    public ApiResponse<List<OrderListResponseDto>> getAll() {
         return ApiResponse.ok(orderUsecases.getAll());
     }
 
