@@ -51,7 +51,7 @@ public class FulfillOrderUsecase {
                         throw new AppException(ErrorCode.ORDER_NOT_FOUND);
                 }
 
-                Warehouse warehouse = warehouseService.getSoleWarehouse();
+                Warehouse warehouse = warehouseService.getWarehouse();
                 if (warehouse == null) {
                         throw new AppException(ErrorCode.NOT_FOUND, "No warehouse found");
                 }

@@ -64,7 +64,7 @@ public class WarehouseServiceImpl implements IWarehouseService {
 
     @Override
     @Transactional(readOnly = true)
-    public Warehouse getSoleWarehouse() {
+    public Warehouse getWarehouse() {
         List<Warehouse> warehouses = warehouseRepository.findAll();
         if (warehouses.size() != 1) {
             throw new AppException(ErrorCode.MULTIPLE_WAREHOUSES_NOT_SUPPORTED,

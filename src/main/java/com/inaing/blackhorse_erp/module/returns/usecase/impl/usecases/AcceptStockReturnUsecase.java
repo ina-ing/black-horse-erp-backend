@@ -59,7 +59,7 @@ public class AcceptStockReturnUsecase {
         ret.setStatus(ReturnStatus.COMPLETED);
         returnStatusHistoryService.record(ret, ReturnStatus.COMPLETED, ActionTrigger.MANUAL, principal);
 
-        Warehouse warehouse = warehouseService.getSoleWarehouse();
+        Warehouse warehouse = warehouseService.getWarehouse();
         if (warehouse == null) {
             throw new AppException(ErrorCode.NOT_FOUND, "No warehouse found");
         }

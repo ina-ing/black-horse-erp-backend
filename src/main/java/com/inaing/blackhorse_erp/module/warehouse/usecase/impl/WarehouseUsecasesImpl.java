@@ -31,8 +31,8 @@ public class WarehouseUsecasesImpl implements IWarehouseUsecases {
     }
 
     @Override
-    public WarehouseResponseDto getByIdentifier(String identifier) {
-        return getWarehouseUsecase.execute(identifier);
+    public WarehouseResponseDto getByIdentifier() {
+        return getWarehouseUsecase.execute();
     }
 
 }

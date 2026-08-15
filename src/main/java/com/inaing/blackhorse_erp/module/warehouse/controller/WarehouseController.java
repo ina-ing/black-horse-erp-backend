@@ -44,7 +44,7 @@ public class WarehouseController {
 
     @GetMapping("/{identifier}")
     @PreAuthorize("hasAnyRole('ADMIN', 'FACTORY', 'WAREHOUSE')")
-    public ApiResponse<WarehouseResponseDto> getByIdentifier(@PathVariable String identifier) {
-        return ApiResponse.ok(warehouseUsecases.getByIdentifier(identifier));
+    public ApiResponse<WarehouseResponseDto> getByIdentifier() {
+        return ApiResponse.ok(warehouseUsecases.getByIdentifier());
     }
 }

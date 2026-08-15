@@ -20,11 +20,11 @@ public class GetWarehouseUsecase {
     private final IWarehouseService warehouseService;
 
     @Transactional(readOnly = true)
-    public WarehouseResponseDto execute(String identifier) {
+    public WarehouseResponseDto execute() {
 
-        Warehouse warehouse = warehouseService.getByIdentifier(identifier);
+        Warehouse warehouse = warehouseService.getWarehouse();
         if (warehouse == null) {
-            throw new AppException(ErrorCode.NOT_FOUND, "Warehouse not found " + identifier);
+            throw new AppException(ErrorCode.NOT_FOUND, "Warehouse not found ");
         }
 
         return warehouseMapper.toResponse(warehouse);
