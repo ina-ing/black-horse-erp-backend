@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inaing.blackhorse_erp.common.dto.ApiResponse;
 import com.inaing.blackhorse_erp.common.dto.list.ListDtoWithAnalytics;
+import com.inaing.blackhorse_erp.module.employee.dto.EmployeeResponseDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.analytics.RetailerListAnalyticsDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerCreationRequestDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerUpdateRequestDto;
@@ -20,7 +21,6 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,10 +55,16 @@ public class RetailerController {
         return ApiResponse.ok(retailerUsecase.getByIdentifier(identifier));
     }
 
-    @GetMapping("/assigned")
+    @GetMapping("/assigned-retailers")
     @PreAuthorize("hasRole('SALES')")
     public ApiResponse<List<RetailerResponseDto>> getAssignedRetailers() {
         return ApiResponse.ok(retailerUsecase.getAssignedRetailers());
+    }
+
+    @GetMapping("/assigned-salesman")
+    @PreAuthorize("hasRole('RETAILER')")
+    public ApiResponse<EmployeeResponseDto> getAssignedSalesman() {
+        return ApiResponse.ok(retailerUsecase.getAssignedSalesman());
     }
 
     @PutMapping("/{identifier}")

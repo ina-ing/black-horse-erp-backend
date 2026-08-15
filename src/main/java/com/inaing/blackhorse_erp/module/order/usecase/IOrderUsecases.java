@@ -2,6 +2,7 @@ package com.inaing.blackhorse_erp.module.order.usecase;
 
 import java.util.List;
 
+import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderCreationRequestDto;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderFulfillmentRequestDto;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderStatusUpdateRequestDto;
@@ -16,7 +17,7 @@ public interface IOrderUsecases {
 
     OrderWithStatusHistoryResponseDto getByIdentifier(String code);
 
-    List<OrderListResponseDto> getAll();
+    List<OrderListResponseDto> getAll(OrderStatus status);
 
     OrderResponseDto update(String id, OrderUpdateRequestDto request);
 

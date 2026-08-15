@@ -46,12 +46,6 @@ public class EmployeeController {
         return ApiResponse.ok("Employee updated", employeeUseCases.update(identifier, request));
     }
 
-    @GetMapping("/sales")
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public ApiResponse<List<EmployeeResponseDto>> getSalesEmployees() {
-        return ApiResponse.ok(employeeUseCases.getSalesEmployees());
-    }
-
     @GetMapping("/role/{role}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ApiResponse<List<EmployeeResponseDto>> getEmployeesByRole(@PathVariable Role role) {

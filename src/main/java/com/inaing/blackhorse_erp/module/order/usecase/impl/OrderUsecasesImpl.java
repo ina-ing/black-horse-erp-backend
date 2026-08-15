@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderCreationRequestDto;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderFulfillmentRequestDto;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderStatusUpdateRequestDto;
@@ -43,8 +44,8 @@ public class OrderUsecasesImpl implements IOrderUsecases {
     }
 
     @Override
-    public List<OrderListResponseDto> getAll() {
-        return getAllOrdersUsecase.execute();
+    public List<OrderListResponseDto> getAll(OrderStatus status) {
+        return getAllOrdersUsecase.execute(status);
     }
 
     @Override
