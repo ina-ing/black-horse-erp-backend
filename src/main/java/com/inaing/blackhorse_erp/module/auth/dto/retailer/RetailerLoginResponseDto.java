@@ -1,5 +1,7 @@
 package com.inaing.blackhorse_erp.module.auth.dto.retailer;
 
+import com.inaing.blackhorse_erp.module.auth.dto.LoginUserDto;
+
 public record RetailerLoginResponseDto(
         String id,
         String code,
@@ -8,6 +10,6 @@ public record RetailerLoginResponseDto(
         String contactPerson,
         String panNumber,
         String assignedSalesman,
-        String role) {
+        String role) implements LoginUserDto {
 
 }

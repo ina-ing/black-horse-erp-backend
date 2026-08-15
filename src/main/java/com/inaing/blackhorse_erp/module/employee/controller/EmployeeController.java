@@ -11,6 +11,7 @@ import com.inaing.blackhorse_erp.module.employee.dto.EmployeeResponseDto;
 import com.inaing.blackhorse_erp.module.employee.dto.request.EmployeeCreationRequestDto;
 import com.inaing.blackhorse_erp.module.employee.dto.request.EmployeeUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.employee.usecase.IEmployeeUseCases;
+import com.inaing.blackhorse_erp.module.role.domain.Role;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,12 @@ public class EmployeeController {
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ApiResponse<List<EmployeeResponseDto>> getSalesEmployees() {
         return ApiResponse.ok(employeeUseCases.getSalesEmployees());
+    }
+
+    @GetMapping("/role/{role}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ApiResponse<List<EmployeeResponseDto>> getEmployeesByRole(@PathVariable Role role) {
+        return ApiResponse.ok(employeeUseCases.getEmployeesByRole(role));
     }
 
     @GetMapping("/{identifier}")

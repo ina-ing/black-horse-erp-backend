@@ -41,6 +41,7 @@ public enum ErrorCode {
     IDENTIFIER_ALREADY_EXISTS(409, "Generated identifier conflicts with an existing resource"),
     INSUFFICIENT_STOCK(409, "Insufficient stock to fulfill the requested quantity."),
     MULTIPLE_WAREHOUSES_NOT_SUPPORTED(409, "Multiple warehouses not supported."),
+    MULTIPLE_FACTORIES_NOT_SUPPORTED(409, "Multiple factories not supported."),
 
     INTERNAL_ERROR(500, "An unexpected error occurred"),
     SERVICE_UNAVAILABLE(503, "Service temporarily unavailable");

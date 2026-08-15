@@ -10,5 +10,5 @@ public interface IWarehouseUsecases {
 
     WarehouseResponseDto update(String identifier, WarehouseUpdateRequestDto request);
 
-    WarehouseResponseDto getByIdentifier();
+    WarehouseResponseDto getOneWarehouse();
 }

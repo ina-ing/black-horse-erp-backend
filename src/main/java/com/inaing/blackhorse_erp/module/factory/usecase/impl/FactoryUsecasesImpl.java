@@ -8,6 +8,7 @@ import com.inaing.blackhorse_erp.module.factory.dto.response.FactoryResponseDto;
 import com.inaing.blackhorse_erp.module.factory.usecase.IFactoryUsecases;
 import com.inaing.blackhorse_erp.module.factory.usecase.impl.usecases.CreateFactoryUsecase;
 import com.inaing.blackhorse_erp.module.factory.usecase.impl.usecases.GetFactoryUsecase;
+import com.inaing.blackhorse_erp.module.factory.usecase.impl.usecases.GetOneFactoryUsecase;
 import com.inaing.blackhorse_erp.module.factory.usecase.impl.usecases.UpdateFactoryUsecase;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class FactoryUsecasesImpl implements IFactoryUsecases {
     private final CreateFactoryUsecase createFactoryUsecase;
     private final UpdateFactoryUsecase updateFactoryUsecase;
     private final GetFactoryUsecase getFactoryUsecase;
+    private final GetOneFactoryUsecase getOneFactoryUsecase;
 
     @Override
     public FactoryResponseDto create(FactoryRequestDto request) {
@@ -33,6 +35,11 @@ public class FactoryUsecasesImpl implements IFactoryUsecases {
     @Override
     public FactoryResponseDto getByIdentifier(String identifier) {
         return getFactoryUsecase.execute(identifier);
+    }
+
+    @Override
+    public FactoryResponseDto getOneFactory() {
+        return getOneFactoryUsecase.execute();
     }
 
 }

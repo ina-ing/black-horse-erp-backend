@@ -1,5 +1,12 @@
 package com.inaing.blackhorse_erp.module.factory.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,14 +19,6 @@ import com.inaing.blackhorse_erp.module.factory.usecase.IFactoryUsecases;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api/v1/factory")
@@ -45,6 +44,12 @@ public class FactoryController {
     @GetMapping("/{identifier}")
     public ApiResponse<FactoryResponseDto> getByIdentifier(@PathVariable String identifier) {
         return ApiResponse.ok(factoryUsecases.getByIdentifier(identifier));
+    }
+
+    @GetMapping()
+    @PreAuthorize("hasAnyRole('ADMIN', 'FACTORY', 'WAREHOUSE')")
+    public ApiResponse<FactoryResponseDto> getOneFactory() {
+        return ApiResponse.ok(factoryUsecases.getOneFactory());
     }
 
 }

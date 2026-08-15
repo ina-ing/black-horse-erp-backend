@@ -1,5 +1,7 @@
 package com.inaing.blackhorse_erp.module.factory.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +58,20 @@ public class FactoryServiceImpl implements IFactoryService {
     @Transactional(readOnly = true)
     public Factory getByManagerId(String managerId) {
         return factoryRepository.findByManagerId(managerId).orElse(null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Factory getFactory() {
+        List<Factory> factories = factoryRepository.findAll();
+        if (factories.isEmpty()) {
+            return null;
+        }
+        if (factories.size() != 1) {
+            throw new AppException(ErrorCode.MULTIPLE_FACTORIES_NOT_SUPPORTED,
+                    "Expected exactly one factory, found: " + factories.size());
+        }
+        return factories.get(0);
     }
 
 }

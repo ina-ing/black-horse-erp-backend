@@ -11,4 +11,6 @@ public interface IFactoryUsecases {
     FactoryResponseDto update(String identifier, FactoryUpdateRequestDto request);
 
     FactoryResponseDto getByIdentifier(String identifier);
+
+    FactoryResponseDto getOneFactory();
 }

@@ -1,9 +1,8 @@
-package com.inaing.blackhorse_erp.module.auth.dto.retailer;
+package com.inaing.blackhorse_erp.module.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record RetailerLoginRequestDto(
+public record LoginRequestDto(
         @NotBlank String phone,
         @NotBlank String password) {
-
 }

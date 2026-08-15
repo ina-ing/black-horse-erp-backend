@@ -66,6 +66,9 @@ public class WarehouseServiceImpl implements IWarehouseService {
     @Transactional(readOnly = true)
     public Warehouse getWarehouse() {
         List<Warehouse> warehouses = warehouseRepository.findAll();
+        if (warehouses.isEmpty()) {
+            return null;
+        }
         if (warehouses.size() != 1) {
             throw new AppException(ErrorCode.MULTIPLE_WAREHOUSES_NOT_SUPPORTED,
                     "Expected exactly one warehouse, found: " + warehouses.size());

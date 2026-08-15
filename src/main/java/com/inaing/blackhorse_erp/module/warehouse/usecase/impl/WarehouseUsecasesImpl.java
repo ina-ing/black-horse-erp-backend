@@ -22,7 +22,7 @@ public class WarehouseUsecasesImpl implements IWarehouseUsecases {
 
     @Override
     public WarehouseResponseDto create(WarehouseRequestDto request) {
-       return createWarehouseUsecase.execute(request);
+        return createWarehouseUsecase.execute(request);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class WarehouseUsecasesImpl implements IWarehouseUsecases {
     }
 
     @Override
-    public WarehouseResponseDto getByIdentifier() {
+    public WarehouseResponseDto getOneWarehouse() {
         return getWarehouseUsecase.execute();
     }
 

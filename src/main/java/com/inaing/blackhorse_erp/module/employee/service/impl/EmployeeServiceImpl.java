@@ -92,4 +92,10 @@ public class EmployeeServiceImpl implements IEmployeeService {
         return employeeRepository.findByRole(role);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByRole(Role role) {
+        return employeeRepository.existsByRole(role);
+    }
+
 }

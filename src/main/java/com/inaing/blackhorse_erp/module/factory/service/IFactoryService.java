@@ -11,4 +11,6 @@ public interface IFactoryService {
     Factory getByIdentifier(String identifier);
 
     Factory getByManagerId(String managerId);
+
+    Factory getFactory();
 }
