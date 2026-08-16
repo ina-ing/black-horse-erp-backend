@@ -8,6 +8,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
@@ -17,11 +21,13 @@ import com.inaing.blackhorse_erp.module.category.service.ICategoryService;
 import com.inaing.blackhorse_erp.module.product.domain.Product;
 import com.inaing.blackhorse_erp.module.product.domain.ProductVariant;
 import com.inaing.blackhorse_erp.module.product.domain.ProductVariantSize;
+import com.inaing.blackhorse_erp.module.product.domain.enums.ProductStatus;
 import com.inaing.blackhorse_erp.module.product.dto.request.ProductUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.product.dto.request.ProductVariantUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.product.dto.response.ProductResponseDto;
 import com.inaing.blackhorse_erp.module.product.mapper.ProductMapper;
 import com.inaing.blackhorse_erp.module.product.service.IProductService;
+import com.inaing.blackhorse_erp.module.storage.service.IStorageService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +38,9 @@ public class UpdateProductUsecase {
     private final ICategoryService categoryService;
     private final IProductService productService;
     private final ProductMapper productMapper;
+    private final IStorageService storageService;
+
+    private static final String PRODUCT_IMAGE_FOLDER = "products";
 
     @Transactional
     public ProductResponseDto execute(String id, ProductUpdateRequestDto request) {
@@ -69,26 +78,30 @@ public class UpdateProductUsecase {
                 product.addVariant(variant);
             } else {
                 variant.setColor(variantRequest.color());
+                variant.setStatus(ProductStatus.ACTIVE);
                 keptVariantIds.add(variant.getId());
             }
-            variant.setImageUrl(variantRequest.imageUrl());
+            String previousImageUrl = variant.getImageUrl();
+            String imageUrl = resolveImageUrl(variantRequest);
+            variant.setImageUrl(imageUrl);
+
+            if (StringUtils.hasText(previousImageUrl) && !previousImageUrl.equals(imageUrl)) {
+                deleteAfterCommit(previousImageUrl);
+            }
 
             syncSizes(product, variant, variantRequest.availableSizes());
         }
 
         existingVariants.values().stream()
                 .filter(variant -> !keptVariantIds.contains(variant.getId()))
-                .toList()
-                .forEach(product::removeVariant);
+                .forEach(variant -> variant.setStatus(ProductStatus.INACTIVE));
     }
 
     private void syncSizes(Product product, ProductVariant variant, List<String> requestedSizes) {
         Set<String> requested = Set.copyOf(requestedSizes);
 
-        variant.getSizes().stream()
-                .filter(size -> !requested.contains(size.getSize()))
-                .toList()
-                .forEach(variant::removeSize);
+        variant.getSizes().forEach(size -> size.setStatus(
+                requested.contains(size.getSize()) ? ProductStatus.ACTIVE : ProductStatus.INACTIVE));
 
         Set<String> existingSizes = variant.getSizes().stream()
                 .map(ProductVariantSize::getSize)
@@ -100,6 +113,30 @@ public class UpdateProductUsecase {
                         .size(size)
                         .sku(buildSku(product.getArticleCode(), variant.getColor(), size))
                     .build()));
+    }
+
+    private void deleteAfterCommit(String url) {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            storageService.deleteByUrl(url);
+            return;
+        }
+
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                storageService.deleteByUrl(url);
+            }
+        });
+    }
+
+    private String resolveImageUrl(ProductVariantUpdateRequestDto variantRequest) {
+        MultipartFile image = variantRequest.image();
+
+        if (image != null && !image.isEmpty()) {
+            return storageService.upload(image, PRODUCT_IMAGE_FOLDER);
+        }
+
+        return variantRequest.imageUrl();
     }
 
     private String buildSku(String articleCode, String color, String size) {

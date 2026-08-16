@@ -31,7 +31,7 @@ public class ProductionOrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('WAREHOUSE')")
+    @PreAuthorize("hasAnyRole('WAREHOUSE', 'ADMIN')")
     public ApiResponse<ProductionOrderResponseDto> create(
             @Valid @RequestBody ProductionOrderCreationRequestDto request) {
         return ApiResponse.created("Production order created", productionOrderUsecases.create(request));

@@ -66,7 +66,7 @@ public class Product extends BaseEntity {
     @Column(name = "size_system", nullable = false)
     private SizeSystem sizeSystem;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
     private Set<ProductVariant> variants = new LinkedHashSet<>();
 

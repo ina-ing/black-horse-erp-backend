@@ -2,6 +2,7 @@ package com.inaing.blackhorse_erp.module.product.usecase.impl.usecases;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
@@ -14,6 +15,7 @@ import com.inaing.blackhorse_erp.module.product.dto.request.ProductCreationReque
 import com.inaing.blackhorse_erp.module.product.dto.response.ProductResponseDto;
 import com.inaing.blackhorse_erp.module.product.mapper.ProductMapper;
 import com.inaing.blackhorse_erp.module.product.service.IProductService;
+import com.inaing.blackhorse_erp.module.storage.service.IStorageService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,9 +23,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CreateProductUsecase {
 
+    private static final String PRODUCT_IMAGE_FOLDER = "products";
+
     private final ProductMapper productMapper;
     private final ICategoryService categoryService;
     private final IProductService productService;
+    private final IStorageService storageService;
 
     @Transactional
     public ProductResponseDto execute(ProductCreationRequestDto request) {
@@ -38,6 +43,7 @@ public class CreateProductUsecase {
         request.variants().forEach(v -> {
             ProductVariant variant = ProductVariant.builder()
                     .color(v.color())
+                    .imageUrl(uploadImage(v.image()))
                     .build();
             product.addVariant(variant);
 
@@ -51,6 +57,14 @@ public class CreateProductUsecase {
         });
 
         return productMapper.toResponse(productService.create(product));
+    }
+
+    private String uploadImage(MultipartFile image) {
+        if (image == null || image.isEmpty()) {
+            return null;
+        }
+
+        return storageService.upload(image, PRODUCT_IMAGE_FOLDER);
     }
 
     private String buildSku(String articleCode, String color, String size) {

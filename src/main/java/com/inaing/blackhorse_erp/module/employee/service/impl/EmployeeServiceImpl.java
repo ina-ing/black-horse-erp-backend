@@ -88,6 +88,12 @@ public class EmployeeServiceImpl implements IEmployeeService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<Employee> getAll() {
+        return employeeRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Employee> getByRole(Role role) {
         return employeeRepository.findByRole(role);
     }

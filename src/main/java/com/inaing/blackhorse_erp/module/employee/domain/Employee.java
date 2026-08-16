@@ -55,7 +55,7 @@ public class Employee extends BaseEntity {
     @Column(name = "email", length = 160)
     private String email;
 
-    @Column(name = "pan_number", length = 10, unique = true)
+    @Column(name = "pan_number", length = 10)
     private String panNumber;
 
     @Enumerated(EnumType.STRING)

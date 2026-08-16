@@ -1,0 +1,26 @@
+package com.inaing.blackhorse_erp.module.employee.usecase.impl.usecases;
+
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import com.inaing.blackhorse_erp.module.employee.dto.EmployeeResponseDto;
+import com.inaing.blackhorse_erp.module.employee.mapper.EmployeeMapper;
+import com.inaing.blackhorse_erp.module.employee.service.IEmployeeService;
+
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
+public class GetAllEmployeesUseCase {
+
+    private final IEmployeeService employeeService;
+    private final EmployeeMapper employeeMapper;
+
+    public List<EmployeeResponseDto> execute() {
+        return employeeService.getAll()
+                .stream()
+                .map(employeeMapper::toResponse)
+                .toList();
+    }
+}

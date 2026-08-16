@@ -59,7 +59,7 @@ public class ProductVariant extends BaseEntity {
     @Builder.Default
     private ProductStatus status = ProductStatus.ACTIVE;
 
-    @OneToMany(mappedBy = "productVariant", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "productVariant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
     private Set<ProductVariantSize> sizes = new LinkedHashSet<>();
 

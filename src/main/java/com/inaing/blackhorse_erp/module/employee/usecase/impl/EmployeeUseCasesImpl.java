@@ -9,6 +9,7 @@ import com.inaing.blackhorse_erp.module.employee.dto.request.EmployeeCreationReq
 import com.inaing.blackhorse_erp.module.employee.dto.request.EmployeeUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.employee.usecase.IEmployeeUseCases;
 import com.inaing.blackhorse_erp.module.employee.usecase.impl.usecases.CreateEmployeeUseCase;
+import com.inaing.blackhorse_erp.module.employee.usecase.impl.usecases.GetAllEmployeesUseCase;
 import com.inaing.blackhorse_erp.module.employee.usecase.impl.usecases.GetEmployeeUsecase;
 import com.inaing.blackhorse_erp.module.employee.usecase.impl.usecases.GetEmployeesByRoleUseCase;
 import com.inaing.blackhorse_erp.module.employee.usecase.impl.usecases.GetSalesEmployeesUseCase;
@@ -24,6 +25,7 @@ public class EmployeeUseCasesImpl implements IEmployeeUseCases {
 
     private final CreateEmployeeUseCase createEmployeeUseCase;
     private final GetSalesEmployeesUseCase getSalesEmployeesUseCase;
+    private final GetAllEmployeesUseCase getAllEmployeesUseCase;
     private final GetEmployeeUsecase getEmployeeUsecase;
     private final GetEmployeesByRoleUseCase getEmployeesByRoleUseCase;
     private final UpdateEmployeeUseCase updateEmployeeUseCase;
@@ -31,6 +33,11 @@ public class EmployeeUseCasesImpl implements IEmployeeUseCases {
     @Override
     public EmployeeResponseDto create(EmployeeCreationRequestDto request) {
         return createEmployeeUseCase.execute(request);
+    }
+
+    @Override
+    public List<EmployeeResponseDto> getAllEmployees() {
+        return getAllEmployeesUseCase.execute();
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.inaing.blackhorse_erp.module.product.domain.enums.ProductStatus;
 public record ProductVariantResponseDto(
         String id,
         String color,
+        String imageUrl,
         ProductStatus status,
         List<ProductVariantSizeResponseDto> availableSizes) {
 

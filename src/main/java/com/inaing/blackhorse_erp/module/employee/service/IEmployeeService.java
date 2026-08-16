@@ -19,6 +19,8 @@ public interface IEmployeeService {
 
     String generateEmployeeCode(Role role);
 
+    List<Employee> getAll();
+
     List<Employee> getByRole(Role role);
 
     boolean existsByRole(Role role);
