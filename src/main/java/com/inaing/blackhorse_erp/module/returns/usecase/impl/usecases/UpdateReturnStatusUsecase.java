@@ -156,7 +156,7 @@ public class UpdateReturnStatusUsecase {
                             || !ret.getHandledBy().getId().equals(principal.id())) {
                         throw new BusinessRuleException(
                                 "RETURN_CANCEL_DENIED",
-                                "You are not allowed to cancel this return.");
+                                "You are not authorized to cancel this return.");
                     }
                 }
                 default -> throw new BusinessRuleException(
