@@ -19,6 +19,7 @@ public interface SupplyMapper {
     @Mapping(target = "size", source = "variantSize.size")
     @Mapping(target = "variantSizeId", source = "variantSize.id")
     @Mapping(target = "color", source = "variantSize.productVariant.color")
+    @Mapping(target = "articleCode", source = "variantSize.productVariant.product.articleCode")
     @Mapping(target = "articleName", source = "variantSize.productVariant.product.name")
     SupplyItemResponseDto toItemResponse(SupplyItem item);
 }

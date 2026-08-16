@@ -42,6 +42,12 @@ public class UpdateReturnStatusUsecase {
 
         Role role = Role.fromName(principal.role());
 
+        if (role == Role.ADMIN) {
+            ret.setStatus(request.status());
+            returnStatusHistoryService.record(ret, request.status(), ActionTrigger.MANUAL, principal);
+            return returnMapper.toResponse(returnService.update(ret));
+        }
+
         switch (request.status()) {
             case APPROVED -> approve(ret, role, principal);
             case CANCELLED -> cancel(ret, role, principal);
@@ -124,6 +130,12 @@ public class UpdateReturnStatusUsecase {
                     "You are not allowed to accept this return.");
         }
 
+        if (ret.getStatus() != ReturnStatus.DISPATCHED) {
+            throw new BusinessRuleException(
+                    "RETURN_NOT_COMPLETABLE",
+                    "Only dispatched returns can be marked as completed.");
+        }
+
         ret.setStatus(ReturnStatus.COMPLETED);
         returnStatusHistoryService.record(ret, ReturnStatus.COMPLETED, ActionTrigger.FULFILLMENT, principal);
     }
@@ -140,22 +152,23 @@ public class UpdateReturnStatusUsecase {
                     }
                 }
                 case SALES -> {
-                    if (ret.getHandledBy().getId().equals(principal.id())) {
+                    if (ret.getHandledBy() == null
+                            || !ret.getHandledBy().getId().equals(principal.id())) {
                         throw new BusinessRuleException(
                                 "RETURN_CANCEL_DENIED",
-                                "You not allowed to cancel this return");
+                                "You are not allowed to cancel this return.");
                     }
                 }
                 default -> throw new BusinessRuleException(
-                        "ORDER_CANCEL_DENIED",
+                        "RETURN_CANCEL_DENIED",
                         "You are not allowed to cancel returns.");
             }
         }
 
-        if (ret.getStatus() != ReturnStatus.PENDING && ret.getStatus() != ReturnStatus.APPROVED) {
+        if (ret.getStatus() != ReturnStatus.PENDING) {
             throw new BusinessRuleException(
                     "RETURN_NOT_CANCELLABLE",
-                    "Only pending or approved returns can be cancelled");
+                    "Only pending returns can be cancelled");
         }
 
         ret.setStatus(ReturnStatus.CANCELLED);

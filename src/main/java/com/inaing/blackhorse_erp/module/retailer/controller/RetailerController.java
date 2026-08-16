@@ -10,6 +10,7 @@ import com.inaing.blackhorse_erp.module.employee.dto.EmployeeResponseDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.analytics.RetailerListAnalyticsDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerCreationRequestDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerUpdateRequestDto;
+import com.inaing.blackhorse_erp.module.retailer.dto.response.RetailerDetailsResponseDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.response.RetailerResponseDto;
 import com.inaing.blackhorse_erp.module.retailer.usecase.IRetailerUsecase;
 
@@ -51,7 +52,7 @@ public class RetailerController {
 
     @GetMapping("/{identifier}")
     @PreAuthorize("hasAnyRole('ADMIN','SALES', 'RETAILER')")
-    public ApiResponse<RetailerResponseDto> getByCode(@PathVariable String identifier) {
+    public ApiResponse<RetailerDetailsResponseDto> getByCode(@PathVariable String identifier) {
         return ApiResponse.ok(retailerUsecase.getByIdentifier(identifier));
     }
 

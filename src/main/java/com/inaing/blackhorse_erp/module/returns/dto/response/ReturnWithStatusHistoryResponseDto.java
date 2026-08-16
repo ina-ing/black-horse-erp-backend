@@ -3,6 +3,7 @@ package com.inaing.blackhorse_erp.module.returns.dto.response;
 import java.time.Instant;
 import java.util.List;
 
+import com.inaing.blackhorse_erp.common.dto.response.ContactResponseDto;
 import com.inaing.blackhorse_erp.module.returns.domain.enums.ReturnReason;
 import com.inaing.blackhorse_erp.module.returns.domain.enums.ReturnStatus;
 
@@ -17,7 +18,9 @@ public record ReturnWithStatusHistoryResponseDto(
         Instant returnDate,
         Integer totalArticles,
         Integer totalQuantity,
-        String note, 
+        String note,
         List<ReturnItemsResponseDto> items,
-        List<ReturnStatusHistoryResponseDto> statusHistory) {
+        List<ReturnStatusHistoryResponseDto> statusHistory,
+        ContactResponseDto retailerDetails,
+        ContactResponseDto handledByDetails) {
 }

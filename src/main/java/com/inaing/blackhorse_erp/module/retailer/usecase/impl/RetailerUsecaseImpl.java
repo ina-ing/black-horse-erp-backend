@@ -9,6 +9,7 @@ import com.inaing.blackhorse_erp.module.employee.dto.EmployeeResponseDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.analytics.RetailerListAnalyticsDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerCreationRequestDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerUpdateRequestDto;
+import com.inaing.blackhorse_erp.module.retailer.dto.response.RetailerDetailsResponseDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.response.RetailerResponseDto;
 import com.inaing.blackhorse_erp.module.retailer.usecase.IRetailerUsecase;
 import com.inaing.blackhorse_erp.module.retailer.usecase.impl.usecases.CreateRetailerUsecase;
@@ -42,7 +43,7 @@ public class RetailerUsecaseImpl implements IRetailerUsecase {
     }
 
     @Override
-    public RetailerResponseDto getByIdentifier(String identifier) {
+    public RetailerDetailsResponseDto getByIdentifier(String identifier) {
         return getRetailerByIdentifierUseCase.execute(identifier);
     }
 

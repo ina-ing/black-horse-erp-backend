@@ -50,7 +50,7 @@ public class ProductionOrderController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('FACTORY', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('FACTORY', 'ADMIN', 'WAREHOUSE')")
     public ApiResponse<List<ProductionOrderResponseDto>> getAll() {
         return ApiResponse.ok(productionOrderUsecases.getAll());
     }

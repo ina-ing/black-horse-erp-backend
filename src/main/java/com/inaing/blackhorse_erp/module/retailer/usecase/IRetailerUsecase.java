@@ -7,6 +7,7 @@ import com.inaing.blackhorse_erp.module.employee.dto.EmployeeResponseDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.analytics.RetailerListAnalyticsDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerCreationRequestDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerUpdateRequestDto;
+import com.inaing.blackhorse_erp.module.retailer.dto.response.RetailerDetailsResponseDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.response.RetailerResponseDto;
 
 public interface IRetailerUsecase {
@@ -14,7 +15,7 @@ public interface IRetailerUsecase {
 
     ListDtoWithAnalytics<RetailerListAnalyticsDto, RetailerResponseDto> getAllRetailers();
 
-    RetailerResponseDto getByIdentifier(String identifier);
+    RetailerDetailsResponseDto getByIdentifier(String identifier);
 
     List<RetailerResponseDto> getAssignedRetailers();
 

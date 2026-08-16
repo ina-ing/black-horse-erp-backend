@@ -6,16 +6,24 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
+import com.inaing.blackhorse_erp.common.dto.response.ContactResponseDto;
+import com.inaing.blackhorse_erp.module.employee.domain.Employee;
 import com.inaing.blackhorse_erp.module.retailer.domain.Retailer;
 import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerCreationRequestDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerUpdateRequestDto;
+import com.inaing.blackhorse_erp.module.retailer.dto.response.RetailerDetailsResponseDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.response.RetailerResponseDto;
 
 @Mapper(componentModel = "spring")
 public interface RetailerMapper {
 
-    @Mapping(target = "assignedSalesman", source = "assignedSalesman.code")
+    @Mapping(target = "assignedSalesman", source = "assignedSalesman.fullname")
     RetailerResponseDto toResponse(Retailer retailer);
+
+    ContactResponseDto toPartyContact(Employee employee);
+
+    @Mapping(target = "assignedSalesman", source = "assignedSalesman")
+    RetailerDetailsResponseDto toDetailsResponse(Retailer retailer);
 
     @Mapping(target = "passwordHash", source = "password")
     @Mapping(target = "assignedSalesman", ignore = true)

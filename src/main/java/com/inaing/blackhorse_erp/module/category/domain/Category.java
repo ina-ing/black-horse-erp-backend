@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "categories", indexes = @Index(name = "idx_categories_name", columnList = "name"), uniqueConstraints = @UniqueConstraint(columnNames = "name"))
+@Table(name = "categories", indexes = @Index(name = "idx_categories_name", columnList = "name"), uniqueConstraints = @UniqueConstraint(columnNames = "identifier"))
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.inaing.blackhorse_erp.module.category.domain.Category;
 
 public interface CategoryRepository extends JpaRepository<Category, String> {
-    Optional<Category> findByName(String name);
+    Optional<Category> findByNameIgnoreCase(String name);
+
+    Optional<Category> findByIdentifier(String identifier);
 
     boolean existsByName(String name);
 

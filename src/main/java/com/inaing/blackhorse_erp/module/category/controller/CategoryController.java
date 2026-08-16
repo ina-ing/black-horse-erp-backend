@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,11 +31,13 @@ public class CategoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ADMIN', 'FACTORY')")
     public ApiResponse<CategoryResponseDto> create(@RequestBody CategoryRequestDto request) {
         return ApiResponse.created("Category created", categoryUsecase.create(request));
     }
 
     @PutMapping("/{identifier}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FACTORY')")
     public ApiResponse<CategoryResponseDto> update(@PathVariable String identifier,
             @Valid @RequestBody CategoryRequestDto request) {
         return ApiResponse.ok("Category updated", categoryUsecase.update(identifier, request));

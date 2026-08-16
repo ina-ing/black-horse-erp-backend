@@ -9,18 +9,19 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.inaing.blackhorse_erp.module.retailer.domain.Retailer;
 
-
 public interface RetailerRepository extends JpaRepository<Retailer, String> {
 
+    @EntityGraph(attributePaths = { "assignedSalesman" })
     Optional<Retailer> findByPhone(String phone);
 
+    @EntityGraph(attributePaths = { "assignedSalesman" })
     Optional<Retailer> findByCode(String code);
 
     boolean existsByPhone(String phone);
 
     boolean existsByCode(String code);
 
-    @EntityGraph(attributePaths = {"assignedSalesman"})
+    @EntityGraph(attributePaths = { "assignedSalesman" })
     List<Retailer> findByAssignedSalesmanId(String salesmanId);
 
     long countByJoinedOnBetween(LocalDate start, LocalDate end);

@@ -66,6 +66,8 @@ public class UpdateReturnUsecase {
                     throw new AppException(ErrorCode.RETURN_UPDATE_DENIED);
                 }
             }
+            case ADMIN -> {
+            }
             default -> throw new AppException(ErrorCode.RETURN_UPDATE_DENIED);
         }
         

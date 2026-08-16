@@ -127,7 +127,7 @@ public class Inventory extends BaseEntity {
             InventoryItem item = index.get(variantSize.getId());
             if (item == null) {
                 throw new AppException(ErrorCode.INVENTORY_ITEM_NOT_FOUND,
-                        "Inventory item not found: " + variantSize.getId());
+                        "Inventory item not found: " + variantSize.getSku());
             }
             assertSufficientStock(item, variantSize, quantity);
             resolved.put(item, quantity);
@@ -142,7 +142,7 @@ public class Inventory extends BaseEntity {
         if (item.getQuantity() < quantity) {
             throw new AppException(ErrorCode.INSUFFICIENT_STOCK,
                     "Insufficient stock for variant size %s: requested %d, available %d"
-                            .formatted(variantSize.getId(), quantity, item.getQuantity()));
+                            .formatted(variantSize.getSku(), quantity, item.getQuantity()));
         }
     }
 

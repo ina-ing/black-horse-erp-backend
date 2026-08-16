@@ -60,7 +60,8 @@ public class UpdateSupplyStatusUsecase {
 
         Map<ProductVariantSize, Integer> quantities = supply.getItems().stream()
                 .collect(Collectors.toMap(SupplyItem::getVariantSize, SupplyItem::getQuantity));
-        inventoryService.credit(LocationType.WAREHOUSE, supply.getSuppliedTo().getId(), quantities);
+        inventoryService.transfer(LocationType.FACTORY, supply.getSuppliedBy().getId(), LocationType.WAREHOUSE,
+                supply.getSuppliedTo().getId(), quantities);
     }
 
     private void issue(Supply supply) {

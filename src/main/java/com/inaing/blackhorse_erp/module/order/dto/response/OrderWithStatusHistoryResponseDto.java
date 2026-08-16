@@ -3,6 +3,7 @@ package com.inaing.blackhorse_erp.module.order.dto.response;
 import java.time.Instant;
 import java.util.List;
 
+import com.inaing.blackhorse_erp.common.dto.response.ContactResponseDto;
 import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
 
 public record OrderWithStatusHistoryResponseDto(
@@ -16,5 +17,7 @@ public record OrderWithStatusHistoryResponseDto(
         Integer totalQuantity,
         String note,
         List<OrderItemsResponseDto> items,
-        List<OrderStatusHistoryResponseDto> statusHistory) {
+        List<OrderStatusHistoryResponseDto> statusHistory,
+        ContactResponseDto retailerDetails,
+        ContactResponseDto handledByDetails) {
 }

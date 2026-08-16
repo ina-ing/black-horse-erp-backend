@@ -32,26 +32,26 @@ public class EmployeeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<EmployeeResponseDto> create(@Valid @RequestBody EmployeeCreationRequestDto request) {
         return ApiResponse.created("Employee created", employeeUseCases.create(request));
     }
 
     @PutMapping("/{identifier}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<EmployeeResponseDto> update(@PathVariable String identifier,
             @Valid @RequestBody EmployeeUpdateRequestDto request) {
         return ApiResponse.ok("Employee updated", employeeUseCases.update(identifier, request));
     }
 
     @GetMapping()
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<EmployeeResponseDto>> getAllEmployees() {
         return ApiResponse.ok(employeeUseCases.getAllEmployees());
     }
 
     @GetMapping("/role/{role}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<EmployeeResponseDto>> getEmployeesByRole(@PathVariable Role role) {
         return ApiResponse.ok(employeeUseCases.getEmployeesByRole(role));
     }

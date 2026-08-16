@@ -42,6 +42,12 @@ public class UpdateOrderStatusUsecase {
 
         Role role = Role.fromName(principal.role());
 
+        if (role == Role.ADMIN) {
+            order.setStatus(request.status());
+            orderStatusHistoryService.record(order, request.status(), ActionTrigger.MANUAL, principal);
+            return orderMapper.toResponse(orderService.update(order));
+        }
+
         switch (request.status()) {
             case APPROVED -> approve(order, role, principal);
             case PROCESSING -> startProcessing(role, order, principal);

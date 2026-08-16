@@ -95,14 +95,14 @@ public class FulfillOrderUsecase {
                                 throw new BusinessRuleException(
                                                 "OVER_FULFILLMENT",
                                                 "Fulfilled quantity exceeds ordered quantity for "
-                                                                + item.getVariantSize().getId());
+                                                                + item.getVariantSize().getSku());
                         }
                         projectedFulfilled.put(line.variantSizeId(), updated);
                         transferQuantities.put(item.getVariantSize(), line.quantity());
                 }
                 inventoryService.transfer(
-                                LocationType.WAREHOUSE, principal.id(),
-                                LocationType.RETAILER, warehouse.getId(),
+                                LocationType.WAREHOUSE, warehouse.getId(),
+                                LocationType.RETAILER, order.getRetailer().getId(),
                                 transferQuantities);
                 projectedFulfilled.forEach(
                                 (variantSizeId, fulfilledQuantity) -> itemsBySku.get(variantSizeId)
