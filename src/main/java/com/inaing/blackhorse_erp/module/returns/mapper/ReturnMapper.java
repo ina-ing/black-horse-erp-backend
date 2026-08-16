@@ -9,6 +9,7 @@ import com.inaing.blackhorse_erp.module.returns.domain.Return;
 import com.inaing.blackhorse_erp.module.returns.domain.ReturnItem;
 import com.inaing.blackhorse_erp.module.returns.domain.ReturnStatusHistory;
 import com.inaing.blackhorse_erp.module.returns.dto.response.ReturnItemsResponseDto;
+import com.inaing.blackhorse_erp.module.returns.dto.response.ReturnListResponseDto;
 import com.inaing.blackhorse_erp.module.returns.dto.response.ReturnResponseDto;
 import com.inaing.blackhorse_erp.module.returns.dto.response.ReturnStatusHistoryResponseDto;
 import com.inaing.blackhorse_erp.module.returns.dto.response.ReturnWithStatusHistoryResponseDto;
@@ -19,6 +20,10 @@ public interface ReturnMapper {
     @Mapping(target = "retailer", source = "retailer.storeName")
     @Mapping(target = "handledBy", source = "handledBy.fullname")
     ReturnResponseDto toResponse(Return ret);
+
+    @Mapping(target = "retailer", source = "retailer.storeName")
+    @Mapping(target = "handledBy", source = "handledBy.fullname")
+    ReturnListResponseDto toListResponse(Return ret);
 
     @Mapping(target = "retailer", source = "ret.retailer.storeName")
     @Mapping(target = "handledBy", source = "ret.handledBy.fullname")

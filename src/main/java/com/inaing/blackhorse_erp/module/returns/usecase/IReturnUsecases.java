@@ -2,9 +2,11 @@ package com.inaing.blackhorse_erp.module.returns.usecase;
 
 import java.util.List;
 
+import com.inaing.blackhorse_erp.module.returns.domain.enums.ReturnStatus;
 import com.inaing.blackhorse_erp.module.returns.dto.request.ReturnCreationRequestDto;
 import com.inaing.blackhorse_erp.module.returns.dto.request.ReturnStatusUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.returns.dto.request.ReturnUpdateRequestDto;
+import com.inaing.blackhorse_erp.module.returns.dto.response.ReturnListResponseDto;
 import com.inaing.blackhorse_erp.module.returns.dto.response.ReturnResponseDto;
 import com.inaing.blackhorse_erp.module.returns.dto.response.ReturnWithStatusHistoryResponseDto;
 
@@ -14,7 +16,7 @@ public interface IReturnUsecases {
 
     ReturnWithStatusHistoryResponseDto getByIdentifier(String code);
 
-    List<ReturnResponseDto> getAll();
+    List<ReturnListResponseDto> getAll(ReturnStatus status);
 
     ReturnResponseDto update(String id, ReturnUpdateRequestDto request);
 

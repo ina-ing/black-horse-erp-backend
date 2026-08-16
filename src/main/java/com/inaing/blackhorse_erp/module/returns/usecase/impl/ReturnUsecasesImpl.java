@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.inaing.blackhorse_erp.module.returns.domain.enums.ReturnStatus;
 import com.inaing.blackhorse_erp.module.returns.dto.request.ReturnCreationRequestDto;
 import com.inaing.blackhorse_erp.module.returns.dto.request.ReturnStatusUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.returns.dto.request.ReturnUpdateRequestDto;
+import com.inaing.blackhorse_erp.module.returns.dto.response.ReturnListResponseDto;
 import com.inaing.blackhorse_erp.module.returns.dto.response.ReturnResponseDto;
 import com.inaing.blackhorse_erp.module.returns.dto.response.ReturnWithStatusHistoryResponseDto;
 import com.inaing.blackhorse_erp.module.returns.usecase.IReturnUsecases;
@@ -41,8 +43,8 @@ public class ReturnUsecasesImpl implements IReturnUsecases {
     }
 
     @Override
-    public List<ReturnResponseDto> getAll() {
-        return getAllReturnsUsecase.execute();
+    public List<ReturnListResponseDto> getAll(ReturnStatus status) {
+        return getAllReturnsUsecase.execute(status);
     }
 
     @Override

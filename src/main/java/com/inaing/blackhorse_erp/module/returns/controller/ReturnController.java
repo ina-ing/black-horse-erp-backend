@@ -1,13 +1,16 @@
 package com.inaing.blackhorse_erp.module.returns.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inaing.blackhorse_erp.common.dto.ApiResponse;
+import com.inaing.blackhorse_erp.module.returns.domain.enums.ReturnStatus;
 import com.inaing.blackhorse_erp.module.returns.dto.request.ReturnCreationRequestDto;
 import com.inaing.blackhorse_erp.module.returns.dto.request.ReturnStatusUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.returns.dto.request.ReturnUpdateRequestDto;
+import com.inaing.blackhorse_erp.module.returns.dto.response.ReturnListResponseDto;
 import com.inaing.blackhorse_erp.module.returns.dto.response.ReturnResponseDto;
 import com.inaing.blackhorse_erp.module.returns.dto.response.ReturnWithStatusHistoryResponseDto;
 import com.inaing.blackhorse_erp.module.returns.usecase.IReturnUsecases;
@@ -44,8 +47,9 @@ public class ReturnController {
     }
 
     @GetMapping
-    public ApiResponse<List<ReturnResponseDto>> getAll() {
-        return ApiResponse.ok(returnUsecases.getAll());
+    public ApiResponse<List<ReturnListResponseDto>> getAll(
+            @RequestParam(required = false) ReturnStatus status) {
+        return ApiResponse.ok(returnUsecases.getAll(status));
     }
 
     @PutMapping("/{id}")

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.inaing.blackhorse_erp.common.domain.enums.CodeType;
 import com.inaing.blackhorse_erp.module.returns.domain.Return;
+import com.inaing.blackhorse_erp.module.returns.domain.enums.ReturnStatus;
 import com.inaing.blackhorse_erp.module.returns.repository.ReturnRepository;
 import com.inaing.blackhorse_erp.module.returns.service.IReturnService;
 import com.inaing.blackhorse_erp.utils.generators.CodeGeneratorUtil;
@@ -50,6 +51,11 @@ public class ReturnServiceImpl implements IReturnService {
     @Transactional
     public Return update(Return ret) {
         return returnRepository.save(ret);
+    }
+
+    @Override
+    public List<Return> getAllByStatus(ReturnStatus status) {
+        return returnRepository.findAllByStatus(status);
     }
 
 }
