@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.inaing.blackhorse_erp.common.domain.enums.CodeType;
 import com.inaing.blackhorse_erp.module.order.domain.Order;
+import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
 import com.inaing.blackhorse_erp.module.order.repository.OrderRepository;
 import com.inaing.blackhorse_erp.module.order.service.IOrderService;
 import com.inaing.blackhorse_erp.utils.generators.CodeGeneratorUtil;
@@ -43,6 +44,12 @@ public class OrderServiceImpl implements IOrderService {
     @Transactional(readOnly = true)
     public List<Order> getAll() {
         return orderRepository.findAllBy();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Order> getAllByStatus(OrderStatus status) {
+        return orderRepository.findAllByStatus(status);
     }
 
     @Override

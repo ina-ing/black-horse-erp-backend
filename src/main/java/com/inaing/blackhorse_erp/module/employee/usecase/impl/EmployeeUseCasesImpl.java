@@ -12,9 +12,7 @@ import com.inaing.blackhorse_erp.module.employee.usecase.impl.usecases.CreateEmp
 import com.inaing.blackhorse_erp.module.employee.usecase.impl.usecases.GetAllEmployeesUseCase;
 import com.inaing.blackhorse_erp.module.employee.usecase.impl.usecases.GetEmployeeUsecase;
 import com.inaing.blackhorse_erp.module.employee.usecase.impl.usecases.GetEmployeesByRoleUseCase;
-import com.inaing.blackhorse_erp.module.employee.usecase.impl.usecases.GetSalesEmployeesUseCase;
 import com.inaing.blackhorse_erp.module.employee.usecase.impl.usecases.UpdateEmployeeUseCase;
-
 import com.inaing.blackhorse_erp.module.role.domain.Role;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 public class EmployeeUseCasesImpl implements IEmployeeUseCases {
 
     private final CreateEmployeeUseCase createEmployeeUseCase;
-    private final GetSalesEmployeesUseCase getSalesEmployeesUseCase;
     private final GetAllEmployeesUseCase getAllEmployeesUseCase;
     private final GetEmployeeUsecase getEmployeeUsecase;
     private final GetEmployeesByRoleUseCase getEmployeesByRoleUseCase;
@@ -38,11 +35,6 @@ public class EmployeeUseCasesImpl implements IEmployeeUseCases {
     @Override
     public List<EmployeeResponseDto> getAllEmployees() {
         return getAllEmployeesUseCase.execute();
-    }
-
-    @Override
-    public List<EmployeeResponseDto> getSalesEmployees() {
-        return getSalesEmployeesUseCase.execute();
     }
 
     @Override

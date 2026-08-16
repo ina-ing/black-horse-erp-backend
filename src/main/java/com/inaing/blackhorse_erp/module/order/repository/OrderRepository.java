@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.inaing.blackhorse_erp.module.order.domain.Order;
+import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
 
 public interface OrderRepository extends JpaRepository<Order, String> {
 
@@ -20,4 +21,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
 
     @EntityGraph(attributePaths = { "items.variantSize.productVariant.product", "retailer", "handledBy" })
     List<Order> findAllBy();
+
+    @EntityGraph(attributePaths = { "items.variantSize.productVariant.product", "retailer", "handledBy" })
+    List<Order> findAllByStatus(OrderStatus status);
 }

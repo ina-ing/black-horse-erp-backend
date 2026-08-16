@@ -12,8 +12,6 @@ public interface IEmployeeUseCases {
 
     List<EmployeeResponseDto> getAllEmployees();
 
-    List<EmployeeResponseDto> getSalesEmployees();
-
     List<EmployeeResponseDto> getEmployeesByRole(Role role);
 
     EmployeeResponseDto getByIdentifier(String identifier);

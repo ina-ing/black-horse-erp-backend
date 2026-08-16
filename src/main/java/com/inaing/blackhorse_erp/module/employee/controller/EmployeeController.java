@@ -1,10 +1,17 @@
 package com.inaing.blackhorse_erp.module.employee.controller;
 
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 import com.inaing.blackhorse_erp.common.dto.ApiResponse;
 import com.inaing.blackhorse_erp.module.employee.dto.EmployeeResponseDto;
@@ -15,15 +22,6 @@ import com.inaing.blackhorse_erp.module.role.domain.Role;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-
 
 @RestController
 @RequestMapping("/api/v1/employee")
@@ -52,12 +50,6 @@ public class EmployeeController {
         return ApiResponse.ok(employeeUseCases.getAllEmployees());
     }
 
-    @GetMapping("/sales")
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public ApiResponse<List<EmployeeResponseDto>> getSalesEmployees() {
-        return ApiResponse.ok(employeeUseCases.getSalesEmployees());
-    }
-
     @GetMapping("/role/{role}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ApiResponse<List<EmployeeResponseDto>> getEmployeesByRole(@PathVariable Role role) {
@@ -68,6 +60,5 @@ public class EmployeeController {
     public ApiResponse<EmployeeResponseDto> getByIdentifier(@PathVariable String identifier) {
         return ApiResponse.ok(employeeUseCases.getByIdentifier(identifier));
     }
-    
-}
 
+}

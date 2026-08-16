@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inaing.blackhorse_erp.common.dto.ApiResponse;
+import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderCreationRequestDto;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderFulfillmentRequestDto;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderStatusUpdateRequestDto;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/v1/order")
@@ -45,8 +47,9 @@ public class OrderController {
     }
 
     @GetMapping
-    public ApiResponse<List<OrderListResponseDto>> getAll() {
-        return ApiResponse.ok(orderUsecases.getAll());
+    public ApiResponse<List<OrderListResponseDto>> getAll(
+            @RequestParam(required = false) OrderStatus status) {
+        return ApiResponse.ok(orderUsecases.getAll(status));
     }
 
     @PutMapping("/{id}")
