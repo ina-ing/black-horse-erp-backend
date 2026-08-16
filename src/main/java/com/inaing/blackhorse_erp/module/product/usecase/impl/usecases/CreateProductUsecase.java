@@ -1,5 +1,7 @@
 package com.inaing.blackhorse_erp.module.product.usecase.impl.usecases;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,12 +41,12 @@ public class CreateProductUsecase {
 
         Product product = productMapper.toEntity(request);
         product.setCategory(category);
-
         request.variants().forEach(v -> {
             ProductVariant variant = ProductVariant.builder()
                     .color(v.color())
                     .imageUrl(uploadImage(v.image()))
                     .build();
+
             product.addVariant(variant);
 
             v.availableSizes().forEach(size -> {
@@ -52,9 +54,11 @@ public class CreateProductUsecase {
                         .size(size)
                         .sku(buildSku(product.getArticleCode(), v.color(), size))
                         .build();
+
                 variant.addSize(variantSize);
             });
         });
+
 
         return productMapper.toResponse(productService.create(product));
     }

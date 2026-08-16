@@ -18,8 +18,6 @@ import com.inaing.blackhorse_erp.module.productionOrder.domain.enums.ProductionO
 import com.inaing.blackhorse_erp.module.productionOrder.dto.response.ProductionOrderResponseDto;
 import com.inaing.blackhorse_erp.module.productionOrder.mapper.ProductionOrderMapper;
 import com.inaing.blackhorse_erp.module.productionOrder.service.IProductionOrderService;
-import com.inaing.blackhorse_erp.security.context.AuthPrincipal;
-import com.inaing.blackhorse_erp.security.context.CurrentUserProvider;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,7 +28,6 @@ public class AcceptProductionOrderUsecase {
     private final IProductionOrderService productionOrderService;
     private final IFactoryService factoryService;
     private final IBacklogService productionBacklogService;
-    private final CurrentUserProvider currentUserProvider;
     private final ProductionOrderMapper productionOrderMapper;
 
     @Transactional
@@ -47,13 +44,7 @@ public class AcceptProductionOrderUsecase {
                     "Only pending production orders can be accepted.");
         }
 
-        AuthPrincipal principal = currentUserProvider.currentPrincipal()
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-
-        Factory factory = factoryService.getByManagerId(principal.id());
-        if (factory == null) {
-            throw new AppException(ErrorCode.NOT_FOUND, "Factory not found for current user " + principal.id());
-        }
+        Factory factory = factoryService.getFactory();
 
         order.setStatus(ProductionOrderStatus.ACCEPTED);
 
