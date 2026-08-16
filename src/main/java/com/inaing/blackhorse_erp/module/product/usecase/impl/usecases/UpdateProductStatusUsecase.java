@@ -25,12 +25,14 @@ public class UpdateProductStatusUsecase {
 
         Product product = productService.getById(id);
 
-        if (request.status() != ProductStatus.ACTIVE && request.status() != ProductStatus.INACTIVE) {
+        if (request.status() != ProductStatus.ACTIVE && request.status() != ProductStatus.INACTIVE
+                || ProductStatus.fromName(request.status().toString()) == null) {
+
             throw new BusinessRuleException(
                     "INVALID_STATUS_VALUE",
                     "Product status can only be updated to active or inactive.");
-        }
 
+        }
         product.setStatus(request.status());
         return productMapper.toResponse(productService.update(product));
     }
