@@ -11,6 +11,11 @@ import com.inaing.blackhorse_erp.module.product.dto.response.ProductResponseDto;
 import com.inaing.blackhorse_erp.module.product.mapper.ProductMapper;
 import com.inaing.blackhorse_erp.module.product.service.IProductService;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -19,6 +24,7 @@ public class UpdateProductStatusUsecase {
 
     private final ProductMapper productMapper;
     private final IProductService productService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public ProductResponseDto execute(String id, ProductStatusUpdateRequestDto request) {
@@ -34,6 +40,17 @@ public class UpdateProductStatusUsecase {
 
         }
         product.setStatus(request.status());
-        return productMapper.toResponse(productService.update(product));
+        Product saved = productService.update(product);
+
+        activityLogService.record(
+                saved.getStatus() == ProductStatus.ACTIVE
+                        ? ActivityAction.PRODUCT_ACTIVATED
+                        : ActivityAction.PRODUCT_DEACTIVATED,
+                (saved.getStatus() == ProductStatus.ACTIVE ? "Activated product "
+                        : "Deactivated product ") + saved.getArticleCode() + ".",
+                ActivityEntityType.PRODUCT, saved.getId(), saved.getArticleCode(),
+                ActionTrigger.MANUAL);
+
+        return productMapper.toResponse(saved);
     }
 }

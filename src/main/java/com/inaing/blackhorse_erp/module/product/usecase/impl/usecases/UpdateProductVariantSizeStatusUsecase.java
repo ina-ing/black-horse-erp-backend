@@ -11,6 +11,11 @@ import com.inaing.blackhorse_erp.module.product.dto.response.ProductVariantSizeR
 import com.inaing.blackhorse_erp.module.product.mapper.ProductMapper;
 import com.inaing.blackhorse_erp.module.product.service.IProductVariantSizeService;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -19,6 +24,7 @@ public class UpdateProductVariantSizeStatusUsecase {
 
     private final ProductMapper productMapper;
     private final IProductVariantSizeService productVariantSizeService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public ProductVariantSizeResponseDto execute(String id, ProductStatusUpdateRequestDto request) {
@@ -32,6 +38,17 @@ public class UpdateProductVariantSizeStatusUsecase {
         }
 
         variantSize.setStatus(request.status());
-        return productMapper.toVariantSizeResponse(productVariantSizeService.update(variantSize));
+        ProductVariantSize saved = productVariantSizeService.update(variantSize);
+
+        activityLogService.record(
+                saved.getStatus() == ProductStatus.ACTIVE
+                        ? ActivityAction.PRODUCT_ACTIVATED
+                        : ActivityAction.PRODUCT_VARIANT_SIZE_DEACTIVATED,
+                (saved.getStatus() == ProductStatus.ACTIVE ? "Activated size "
+                        : "Deactivated size ") + saved.getSize() + " (" + saved.getSku() + ").",
+                ActivityEntityType.PRODUCT, saved.getId(), saved.getSku(),
+                ActionTrigger.MANUAL);
+
+        return productMapper.toVariantSizeResponse(saved);
     }
 }

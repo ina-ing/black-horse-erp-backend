@@ -29,6 +29,11 @@ import com.inaing.blackhorse_erp.module.product.mapper.ProductMapper;
 import com.inaing.blackhorse_erp.module.product.service.IProductService;
 import com.inaing.blackhorse_erp.module.storage.service.IStorageService;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -39,6 +44,7 @@ public class UpdateProductUsecase {
     private final IProductService productService;
     private final ProductMapper productMapper;
     private final IStorageService storageService;
+    private final IActivityLogService activityLogService;
 
     private static final String PRODUCT_IMAGE_FOLDER = "products";
 
@@ -61,7 +67,15 @@ public class UpdateProductUsecase {
 
         syncVariants(product, request.variants());
 
-        return productMapper.toResponse(productService.update(product));
+        Product updated = productService.update(product);
+
+        activityLogService.record(
+                ActivityAction.PRODUCT_UPDATED,
+                "Updated product " + updated.getName() + " (" + updated.getArticleCode() + ").",
+                ActivityEntityType.PRODUCT, updated.getId(), updated.getArticleCode(),
+                ActionTrigger.MANUAL);
+
+        return productMapper.toResponse(updated);
     }
 
     private void syncVariants(Product product, List<ProductVariantUpdateRequestDto> variantRequests) {

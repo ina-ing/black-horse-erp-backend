@@ -2,12 +2,18 @@ package com.inaing.blackhorse_erp.module.supply.service.impl;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inaing.blackhorse_erp.common.domain.enums.CodeType;
 import com.inaing.blackhorse_erp.module.supply.domain.Supply;
+import com.inaing.blackhorse_erp.module.supply.dto.projections.SupplyStatusCountProjection;
+import com.inaing.blackhorse_erp.module.supply.dto.request.SupplyFilter;
 import com.inaing.blackhorse_erp.module.supply.repository.SupplyRepository;
+import com.inaing.blackhorse_erp.module.supply.repository.spec.SupplySpecifications;
 import com.inaing.blackhorse_erp.module.supply.service.ISupplyService;
 import com.inaing.blackhorse_erp.utils.generators.CodeGeneratorUtil;
 import com.inaing.blackhorse_erp.utils.uuid.UUIDUtils;
@@ -48,4 +54,21 @@ public class SupplyServiceImpl implements ISupplyService {
         return supplyRepository.findAll();
     }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Supply> getSupplies(SupplyFilter filter, Pageable pageable) {
+        Specification<Supply> spec = Specification.allOf(
+                SupplySpecifications.suppliedBetween(filter.dateRange()),
+                SupplySpecifications.statusIn(filter.statuses()),
+                SupplySpecifications.matchesSearch(filter.search()));
+
+        return supplyRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SupplyStatusCountProjection> getStatusCounts() {
+        return supplyRepository.findStatusCounts();
+    }
 }

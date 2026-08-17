@@ -5,7 +5,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inaing.blackhorse_erp.common.dto.ApiResponse;
-import com.inaing.blackhorse_erp.common.dto.list.ListDtoWithAnalytics;
+import com.inaing.blackhorse_erp.common.dto.list.PagedListWithAnalytics;
+import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerQueryParams;
 import com.inaing.blackhorse_erp.module.employee.dto.EmployeeResponseDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.analytics.RetailerListAnalyticsDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerCreationRequestDto;
@@ -19,14 +20,13 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
@@ -44,10 +44,10 @@ public class RetailerController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<ListDtoWithAnalytics<RetailerListAnalyticsDto, RetailerResponseDto>> getAllRetailers(
-            @RequestParam(required = false) String code, Pageable pageable) {
-        return ApiResponse.ok(retailerUsecase.getAllRetailers());
+    @PreAuthorize("hasAnyRole('ADMIN','SALES')")
+    public ApiResponse<PagedListWithAnalytics<RetailerListAnalyticsDto, RetailerResponseDto>> getAllRetailers(
+            @ModelAttribute RetailerQueryParams params) {
+        return ApiResponse.ok(retailerUsecase.getAllRetailers(params));
     }
 
     @GetMapping("/{identifier}")

@@ -23,6 +23,11 @@ import com.inaing.blackhorse_erp.module.production.mapper.ProductionMapper;
 import com.inaing.blackhorse_erp.module.production.service.IProductionService;
 import com.inaing.blackhorse_erp.utils.ItemsUtils;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -33,6 +38,7 @@ public class UpdateProductionUsecase {
     private final IProductionService productionService;
     private final IInventoryService inventoryService;
     private final IProductVariantSizeService productVariantSizeService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public ProductionResponseDto execute(String identifier, ProductionRequestDto request) {
@@ -92,6 +98,14 @@ public class UpdateProductionUsecase {
         }
         production.recalculateTotals();
 
-        return productionMapper.toResponse(productionService.update(production));
+        Production updated = productionService.update(production);
+
+        activityLogService.record(
+                ActivityAction.PRODUCTION_UPDATED,
+                "Updated production " + updated.getCode() + ".",
+                ActivityEntityType.PRODUCTION, updated.getId(), updated.getCode(),
+                ActionTrigger.MANUAL);
+
+        return productionMapper.toResponse(updated);
     }
 }

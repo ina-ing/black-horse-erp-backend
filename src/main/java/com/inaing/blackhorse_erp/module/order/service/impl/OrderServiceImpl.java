@@ -3,13 +3,20 @@ package com.inaing.blackhorse_erp.module.order.service.impl;
 import java.time.Instant;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inaing.blackhorse_erp.common.domain.enums.CodeType;
 import com.inaing.blackhorse_erp.module.order.domain.Order;
 import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
+import com.inaing.blackhorse_erp.module.order.dto.projections.OrderMonthlyVolumeProjection;
+import com.inaing.blackhorse_erp.module.order.dto.projections.OrderStatusCountProjection;
+import com.inaing.blackhorse_erp.module.order.dto.request.OrderFilter;
 import com.inaing.blackhorse_erp.module.order.repository.OrderRepository;
+import com.inaing.blackhorse_erp.module.order.repository.spec.OrderSpecifications;
 import com.inaing.blackhorse_erp.module.order.service.IOrderService;
 import com.inaing.blackhorse_erp.utils.generators.CodeGeneratorUtil;
 import com.inaing.blackhorse_erp.utils.uuid.UUIDUtils;
@@ -50,6 +57,34 @@ public class OrderServiceImpl implements IOrderService {
     @Transactional(readOnly = true)
     public List<Order> getAllByStatus(OrderStatus status) {
         return orderRepository.findAllByStatus(status);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Order> getOrders(OrderFilter filter, Pageable pageable) {
+        Specification<Order> spec = Specification.allOf(
+                OrderSpecifications.orderDateBetween(filter.dateRange()),
+                OrderSpecifications.statusIn(filter.statuses()),
+                OrderSpecifications.handledBy(filter.handledById()),
+                OrderSpecifications.placedBy(filter.retailerId()),
+                OrderSpecifications.retailerIs(filter.retailer()),
+                OrderSpecifications.matchesSearch(filter.search()));
+
+        return orderRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderStatusCountProjection> getStatusCounts(String handledById, String retailerId,
+            List<OrderStatus> statuses) {
+        return orderRepository.findStatusCounts(handledById, retailerId, statuses);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderMonthlyVolumeProjection> getMonthlyVolume(Instant from, String handledById,
+            String retailerId, List<OrderStatus> statuses) {
+        return orderRepository.findMonthlyVolume(from, handledById, retailerId, statuses);
     }
 
     @Override

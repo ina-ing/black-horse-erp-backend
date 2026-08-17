@@ -16,6 +16,11 @@ import com.inaing.blackhorse_erp.module.warehouse.dto.response.WarehouseResponse
 import com.inaing.blackhorse_erp.module.warehouse.mapper.WarehouseMapper;
 import com.inaing.blackhorse_erp.module.warehouse.service.IWarehouseService;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -26,6 +31,7 @@ public class CreateWarehouseUsecase {
     private final IWarehouseService warehouseService;
     private final IEmployeeService employeeService;
     private final IInventoryService inventoryService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public WarehouseResponseDto execute(WarehouseRequestDto request) {
@@ -41,6 +47,13 @@ public class CreateWarehouseUsecase {
 
         Warehouse createdWarehouse = warehouseService.create(warehouse);
         inventoryService.createFor(LocationType.WAREHOUSE, createdWarehouse.getId());
+
+        activityLogService.record(
+                ActivityAction.WAREHOUSE_CREATED,
+                "Created warehouse " + createdWarehouse.getName() + " managed by "
+                        + manager.getFullname() + ".",
+                ActivityEntityType.WAREHOUSE, createdWarehouse.getId(), createdWarehouse.getCode(),
+                ActionTrigger.CREATION);
 
         return warehouseMapper.toResponse(createdWarehouse);
     }

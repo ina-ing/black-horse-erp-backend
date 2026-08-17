@@ -5,10 +5,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inaing.blackhorse_erp.common.dto.ApiResponse;
+import com.inaing.blackhorse_erp.common.dto.list.PagedListWithAnalytics;
 import com.inaing.blackhorse_erp.module.supply.dto.request.SupplyCreationRequestDto;
 import com.inaing.blackhorse_erp.module.supply.dto.request.SupplyItemsUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.supply.dto.request.SupplyStatusUpdateRequestDto;
+import com.inaing.blackhorse_erp.module.supply.dto.request.SupplyQueryParams;
+import com.inaing.blackhorse_erp.module.supply.dto.response.SupplyListResponseDto;
 import com.inaing.blackhorse_erp.module.supply.dto.response.SupplyResponseDto;
+import com.inaing.blackhorse_erp.module.supply.dto.response.analytics.SupplyBasicAnalyticsDto;
 import com.inaing.blackhorse_erp.module.supply.usecase.ISupplyUsecases;
 
 import jakarta.validation.Valid;
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
@@ -40,8 +45,9 @@ public class SupplyController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('FACTORY', 'ADMIN', 'WAREHOUSE')")
-    public ApiResponse<List<SupplyResponseDto>> getAll() {
-        return ApiResponse.ok(supplyUsecases.getAll());
+    public ApiResponse<PagedListWithAnalytics<SupplyBasicAnalyticsDto, SupplyListResponseDto>> getAll(
+            @ModelAttribute SupplyQueryParams params) {
+        return ApiResponse.ok(supplyUsecases.getAll(params));
     }
 
     @GetMapping("/{identifier}")

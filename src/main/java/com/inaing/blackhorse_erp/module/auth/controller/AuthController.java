@@ -8,7 +8,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
 import com.inaing.blackhorse_erp.common.dto.ApiResponse;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
 import com.inaing.blackhorse_erp.module.auth.dto.LoginRequestDto;
 import com.inaing.blackhorse_erp.module.auth.dto.LoginResult;
 import com.inaing.blackhorse_erp.module.auth.dto.LoginUserDto;
@@ -24,6 +28,7 @@ import lombok.AllArgsConstructor;
 public class AuthController {
 
     private final IAuthUseCase authUseCase;
+    private final IActivityLogService activityLogService;
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginUserDto>> login(
@@ -38,6 +43,9 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<String>> logout() {
         ResponseCookie cookie = AccessTokenCookie.clear();
+
+        activityLogService.record(ActivityAction.LOGGED_OUT, "Signed out.",
+                ActivityEntityType.AUTH, null, null, ActionTrigger.MANUAL);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())

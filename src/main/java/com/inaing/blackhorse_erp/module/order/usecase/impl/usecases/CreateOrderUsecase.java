@@ -25,6 +25,10 @@ import com.inaing.blackhorse_erp.security.context.AuthPrincipal;
 import com.inaing.blackhorse_erp.security.context.CurrentUserProvider;
 import com.inaing.blackhorse_erp.utils.ItemsUtils;
 
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -36,6 +40,7 @@ public class CreateOrderUsecase {
     private final IOrderStatusHistoryService orderStatusHistoryService;
     private final IProductVariantSizeService variantSizeService;
     private final CurrentUserProvider currentUserProvider;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public OrderResponseDto execute(OrderCreationRequestDto request) {
@@ -80,6 +85,12 @@ public class CreateOrderUsecase {
 
         Order created = orderService.create(order);
         orderStatusHistoryService.record(created, status, ActionTrigger.CREATION, principal);
+
+        activityLogService.record(
+                ActivityAction.ORDER_CREATED,
+                "Placed order " + created.getCode() + " for retailer " + retailer.getStoreName() + ".",
+                ActivityEntityType.ORDER, created.getId(), created.getCode(),
+                ActionTrigger.CREATION);
 
         return orderMapper.toResponse(created);
 

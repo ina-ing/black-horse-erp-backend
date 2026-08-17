@@ -1,5 +1,6 @@
 package com.inaing.blackhorse_erp.module.backlog.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ public class BacklogController {
     private final IBacklogUsecases backlogUsecases;
 
     @GetMapping("/factory/{identifier}")
+    @PreAuthorize("hasAnyRole('ADMIN','FACTORY','WAREHOUSE')")
     public ApiResponse<BacklogResponseDto> getByFactory(@PathVariable String identifier) {
         return ApiResponse.ok(backlogUsecases.getByFactory(identifier));
     }

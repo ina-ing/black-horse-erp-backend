@@ -20,6 +20,11 @@ import com.inaing.blackhorse_erp.module.supply.dto.response.SupplyResponseDto;
 import com.inaing.blackhorse_erp.module.supply.mapper.SupplyMapper;
 import com.inaing.blackhorse_erp.module.supply.service.ISupplyService;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -29,6 +34,7 @@ public class UpdateSupplyStatusUsecase {
     private final SupplyMapper supplyMapper;
     private final ISupplyService supplyService;
     private final IInventoryService inventoryService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public SupplyResponseDto execute(String identifier, SupplyStatusUpdateRequestDto request) {
@@ -52,7 +58,20 @@ public class UpdateSupplyStatusUsecase {
                     "Supply status can only be updated to accepted or issue.");
         }
 
-        return supplyMapper.toResponse(supplyService.update(supply));
+        Supply saved = supplyService.update(supply);
+
+        activityLogService.record(
+                saved.getStatus() == SupplyStatus.ISSUE
+                        ? ActivityAction.SUPPLY_DISPUTED
+                        : ActivityAction.SUPPLY_ACCEPTED,
+                saved.getStatus() == SupplyStatus.ISSUE
+                        ? "Flagged an issue on supply " + saved.getCode() + "."
+                        : "Accepted supply " + saved.getCode() + " into warehouse "
+                                + saved.getSuppliedTo().getName() + ".",
+                ActivityEntityType.SUPPLY, saved.getId(), saved.getCode(),
+                ActionTrigger.MANUAL);
+
+        return supplyMapper.toResponse(saved);
     }
 
     private void accept(Supply supply) {

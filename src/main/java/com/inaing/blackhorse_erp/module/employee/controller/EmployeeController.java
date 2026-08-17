@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,8 +15,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inaing.blackhorse_erp.common.dto.ApiResponse;
+import com.inaing.blackhorse_erp.common.dto.list.PagedListWithAnalytics;
+import com.inaing.blackhorse_erp.module.employee.dto.response.analytics.EmployeeBasicAnalyticsDto;
 import com.inaing.blackhorse_erp.module.employee.dto.EmployeeResponseDto;
 import com.inaing.blackhorse_erp.module.employee.dto.request.EmployeeCreationRequestDto;
+import com.inaing.blackhorse_erp.module.employee.dto.request.EmployeeQueryParams;
 import com.inaing.blackhorse_erp.module.employee.dto.request.EmployeeUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.employee.usecase.IEmployeeUseCases;
 import com.inaing.blackhorse_erp.module.role.domain.Role;
@@ -46,8 +50,9 @@ public class EmployeeController {
 
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<List<EmployeeResponseDto>> getAllEmployees() {
-        return ApiResponse.ok(employeeUseCases.getAllEmployees());
+    public ApiResponse<PagedListWithAnalytics<EmployeeBasicAnalyticsDto, EmployeeResponseDto>> getAllEmployees(
+            @ModelAttribute EmployeeQueryParams params) {
+        return ApiResponse.ok(employeeUseCases.getAllEmployees(params));
     }
 
     @GetMapping("/role/{role}")

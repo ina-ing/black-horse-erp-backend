@@ -44,6 +44,7 @@ public class CategoryController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','SALES','RETAILER','WAREHOUSE','FACTORY')")
     public ApiResponse<List<CategoryResponseDto>> getAll() {
         return ApiResponse.ok(categoryUsecase.getAll());
     }

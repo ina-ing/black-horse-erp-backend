@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +15,9 @@ import com.inaing.blackhorse_erp.common.domain.enums.CodeType;
 import com.inaing.blackhorse_erp.common.dto.ErrorCode;
 import com.inaing.blackhorse_erp.exception.exceptions.AppException;
 import com.inaing.blackhorse_erp.module.retailer.domain.Retailer;
+import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerFilter;
 import com.inaing.blackhorse_erp.module.retailer.repository.RetailerRepository;
+import com.inaing.blackhorse_erp.module.retailer.repository.spec.RetailerSpecifications;
 import com.inaing.blackhorse_erp.module.retailer.service.IRetailerService;
 import com.inaing.blackhorse_erp.utils.generators.CodeGeneratorUtil;
 import com.inaing.blackhorse_erp.utils.uuid.UUIDUtils;
@@ -59,6 +64,7 @@ public class RetailerServiceImpl implements IRetailerService {
 
         countMap.put("TOTAL", retailerRepository.count());
         countMap.put("NEW", retailerRepository.countByJoinedOnBetween(startOfMonth, endOfMonth));
+        countMap.put("PROVINCES", retailerRepository.countDistinctProvinces(null));
 
         return countMap;
     }
@@ -94,4 +100,36 @@ public class RetailerServiceImpl implements IRetailerService {
         return retailerRepository.save(retailer);
     }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Long> getRetailerCounts(String assignedSalesmanId) {
+        if (assignedSalesmanId == null) {
+            return getRetailerCounts();
+        }
+
+        Map<String, Long> countMap = new HashMap<>();
+
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+
+        countMap.put("TOTAL", retailerRepository.countByAssignedSalesmanId(assignedSalesmanId));
+        countMap.put("NEW", retailerRepository.countByAssignedSalesmanIdAndJoinedOnBetween(
+                assignedSalesmanId, startOfMonth, endOfMonth));
+        countMap.put("PROVINCES", retailerRepository.countDistinctProvinces(assignedSalesmanId));
+
+        return countMap;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Retailer> getRetailers(RetailerFilter filter, Pageable pageable) {
+        Specification<Retailer> spec = Specification.allOf(
+                RetailerSpecifications.provinceIs(filter.province()),
+                RetailerSpecifications.businessTypeIs(filter.businessType()),
+                RetailerSpecifications.assignedTo(filter.assignedSalesmanId()),
+                RetailerSpecifications.matchesSearch(filter.search()));
+
+        return retailerRepository.findAll(spec, pageable);
+    }
 }

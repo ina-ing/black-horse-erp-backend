@@ -4,7 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.inaing.blackhorse_erp.common.dto.list.ListDtoWithAnalytics;
+import com.inaing.blackhorse_erp.common.dto.list.PagedListWithAnalytics;
+import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerQueryParams;
 import com.inaing.blackhorse_erp.module.employee.dto.EmployeeResponseDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.analytics.RetailerListAnalyticsDto;
 import com.inaing.blackhorse_erp.module.retailer.dto.request.RetailerCreationRequestDto;
@@ -38,8 +39,9 @@ public class RetailerUsecaseImpl implements IRetailerUsecase {
     }
 
     @Override
-    public ListDtoWithAnalytics<RetailerListAnalyticsDto, RetailerResponseDto> getAllRetailers() {
-        return getAllRetailersUsecase.execute();
+    public PagedListWithAnalytics<RetailerListAnalyticsDto, RetailerResponseDto> getAllRetailers(
+            RetailerQueryParams params) {
+        return getAllRetailersUsecase.execute(params);
     }
 
     @Override

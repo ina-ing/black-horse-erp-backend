@@ -5,14 +5,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.inaing.blackhorse_erp.common.dto.ApiResponse;
+import com.inaing.blackhorse_erp.common.dto.list.PagedListWithAnalytics;
 import com.inaing.blackhorse_erp.module.productionOrder.dto.request.ProductionOrderCreationRequestDto;
+import com.inaing.blackhorse_erp.module.productionOrder.dto.request.ProductionOrderQueryParams;
+import com.inaing.blackhorse_erp.module.productionOrder.dto.response.ProductionOrderListResponseDto;
 import com.inaing.blackhorse_erp.module.productionOrder.dto.response.ProductionOrderResponseDto;
+import com.inaing.blackhorse_erp.module.productionOrder.dto.response.analytics.ProductionOrderBasicAnalyticsDto;
 import com.inaing.blackhorse_erp.module.productionOrder.usecase.IProductionOrderUsecases;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 @RestController
 @RequestMapping("/api/v1/production-order")
@@ -51,8 +55,9 @@ public class ProductionOrderController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('FACTORY', 'ADMIN', 'WAREHOUSE')")
-    public ApiResponse<List<ProductionOrderResponseDto>> getAll() {
-        return ApiResponse.ok(productionOrderUsecases.getAll());
+    public ApiResponse<PagedListWithAnalytics<ProductionOrderBasicAnalyticsDto, ProductionOrderListResponseDto>> getAll(
+            @ModelAttribute ProductionOrderQueryParams params) {
+        return ApiResponse.ok(productionOrderUsecases.getAll(params));
     }
 
 }

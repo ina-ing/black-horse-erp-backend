@@ -1,11 +1,13 @@
 package com.inaing.blackhorse_erp.module.productionOrder.usecase.impl;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 
 import com.inaing.blackhorse_erp.module.productionOrder.dto.request.ProductionOrderCreationRequestDto;
+import com.inaing.blackhorse_erp.common.dto.list.PagedListWithAnalytics;
+import com.inaing.blackhorse_erp.module.productionOrder.dto.request.ProductionOrderQueryParams;
+import com.inaing.blackhorse_erp.module.productionOrder.dto.response.ProductionOrderListResponseDto;
 import com.inaing.blackhorse_erp.module.productionOrder.dto.response.ProductionOrderResponseDto;
+import com.inaing.blackhorse_erp.module.productionOrder.dto.response.analytics.ProductionOrderBasicAnalyticsDto;
 import com.inaing.blackhorse_erp.module.productionOrder.usecase.IProductionOrderUsecases;
 import com.inaing.blackhorse_erp.module.productionOrder.usecase.impl.usecases.AcceptProductionOrderUsecase;
 import com.inaing.blackhorse_erp.module.productionOrder.usecase.impl.usecases.CreateProductionOrderUsecase;
@@ -39,7 +41,8 @@ public class ProductionOrderUsecasesImpl implements IProductionOrderUsecases {
     }
 
     @Override
-    public List<ProductionOrderResponseDto> getAll() {
-        return getAllProductionOrdersUsecase.execute();
+    public PagedListWithAnalytics<ProductionOrderBasicAnalyticsDto, ProductionOrderListResponseDto> getAll(
+            ProductionOrderQueryParams params) {
+        return getAllProductionOrdersUsecase.execute(params);
     }
 }

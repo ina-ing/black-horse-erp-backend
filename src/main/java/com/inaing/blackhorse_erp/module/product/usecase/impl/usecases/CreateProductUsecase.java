@@ -19,6 +19,11 @@ import com.inaing.blackhorse_erp.module.product.mapper.ProductMapper;
 import com.inaing.blackhorse_erp.module.product.service.IProductService;
 import com.inaing.blackhorse_erp.module.storage.service.IStorageService;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -31,6 +36,7 @@ public class CreateProductUsecase {
     private final ICategoryService categoryService;
     private final IProductService productService;
     private final IStorageService storageService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public ProductResponseDto execute(ProductCreationRequestDto request) {
@@ -60,7 +66,15 @@ public class CreateProductUsecase {
         });
 
 
-        return productMapper.toResponse(productService.create(product));
+        Product created = productService.create(product);
+
+        activityLogService.record(
+                ActivityAction.PRODUCT_CREATED,
+                "Created product " + created.getName() + " (" + created.getArticleCode() + ").",
+                ActivityEntityType.PRODUCT, created.getId(), created.getArticleCode(),
+                ActionTrigger.CREATION);
+
+        return productMapper.toResponse(created);
     }
 
     private String uploadImage(MultipartFile image) {

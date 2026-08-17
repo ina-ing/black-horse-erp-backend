@@ -18,6 +18,10 @@ import com.inaing.blackhorse_erp.module.role.domain.Role;
 import com.inaing.blackhorse_erp.security.context.AuthPrincipal;
 import com.inaing.blackhorse_erp.security.context.CurrentUserProvider;
 
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -28,6 +32,7 @@ public class UpdateOrderStatusUsecase {
     private final IOrderStatusHistoryService orderStatusHistoryService;
     private final CurrentUserProvider currentUserProvider;
     private final OrderMapper orderMapper;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public OrderResponseDto execute(String id, OrderStatusUpdateRequestDto request) {
@@ -45,7 +50,10 @@ public class UpdateOrderStatusUsecase {
         if (role == Role.ADMIN) {
             order.setStatus(request.status());
             orderStatusHistoryService.record(order, request.status(), ActionTrigger.MANUAL, principal);
-            return orderMapper.toResponse(orderService.update(order));
+            Order saved = orderService.update(order);
+            logStatusChange(saved, request.status());
+
+            return orderMapper.toResponse(saved);
         }
 
         switch (request.status()) {
@@ -56,7 +64,25 @@ public class UpdateOrderStatusUsecase {
                     "INVALID_STATUS_TRANSITION",
                     "This status cannot be set manually.");
         }
-        return orderMapper.toResponse(orderService.update(order));
+        Order saved = orderService.update(order);
+        logStatusChange(saved, request.status());
+
+        return orderMapper.toResponse(saved);
+    }
+
+    private void logStatusChange(Order order, OrderStatus status) {
+        activityLogService.record(
+                switch (status) {
+                    case APPROVED -> ActivityAction.ORDER_APPROVED;
+                    case PROCESSING -> ActivityAction.ORDER_PROCESSING;
+                    case CANCELLED -> ActivityAction.ORDER_CANCELLED;
+                    default -> ActivityAction.ORDER_UPDATED;
+                },
+                "Order " + order.getCode() + " moved to " + status + ".",
+                ActivityEntityType.ORDER, order.getId(), order.getCode(),
+                status == OrderStatus.CANCELLED
+                        ? ActionTrigger.CANCELLATION
+                        : ActionTrigger.MANUAL);
     }
 
     private void approve(Order order, Role role, AuthPrincipal principal) {

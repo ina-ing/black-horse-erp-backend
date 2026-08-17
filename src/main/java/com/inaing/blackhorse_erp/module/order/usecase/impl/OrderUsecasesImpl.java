@@ -1,17 +1,17 @@
 package com.inaing.blackhorse_erp.module.order.usecase.impl;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 
-import com.inaing.blackhorse_erp.module.order.domain.enums.OrderStatus;
+import com.inaing.blackhorse_erp.common.dto.list.PagedListWithAnalytics;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderCreationRequestDto;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderFulfillmentRequestDto;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderStatusUpdateRequestDto;
+import com.inaing.blackhorse_erp.module.order.dto.request.OrderQueryParams;
 import com.inaing.blackhorse_erp.module.order.dto.request.OrderUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.order.dto.response.OrderListResponseDto;
 import com.inaing.blackhorse_erp.module.order.dto.response.OrderResponseDto;
 import com.inaing.blackhorse_erp.module.order.dto.response.OrderWithStatusHistoryResponseDto;
+import com.inaing.blackhorse_erp.module.order.dto.response.analytics.OrderBasicAnalyticsDto;
 import com.inaing.blackhorse_erp.module.order.usecase.IOrderUsecases;
 import com.inaing.blackhorse_erp.module.order.usecase.impl.usecases.CreateOrderUsecase;
 import com.inaing.blackhorse_erp.module.order.usecase.impl.usecases.FulfillOrderUsecase;
@@ -44,8 +44,9 @@ public class OrderUsecasesImpl implements IOrderUsecases {
     }
 
     @Override
-    public List<OrderListResponseDto> getAll(OrderStatus status) {
-        return getAllOrdersUsecase.execute(status);
+    public PagedListWithAnalytics<OrderBasicAnalyticsDto, OrderListResponseDto> getAll(
+            OrderQueryParams params) {
+        return getAllOrdersUsecase.execute(params);
     }
 
     @Override

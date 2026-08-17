@@ -23,6 +23,11 @@ import com.inaing.blackhorse_erp.module.production.mapper.ProductionMapper;
 import com.inaing.blackhorse_erp.module.production.service.IProductionService;
 import com.inaing.blackhorse_erp.utils.ItemsUtils;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -35,6 +40,7 @@ public class CreateProductionUsecase {
     private final IProductVariantSizeService productVariantSizeService;
     private final IBacklogService productionBacklogService;
     private final IInventoryService inventoryService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public ProductionResponseDto execute(ProductionRequestDto request) {
@@ -63,6 +69,15 @@ public class CreateProductionUsecase {
         productionBacklogService.reduceQuantities(factory, quantities);
         inventoryService.credit(LocationType.FACTORY, factory.getId(), quantities);
 
-        return productionMapper.toResponse(productionService.create(production));
+        Production created = productionService.create(production);
+
+        activityLogService.record(
+                ActivityAction.PRODUCTION_CREATED,
+                "Recorded production " + created.getCode() + " of " + created.getTotalQuantity()
+                        + " pairs at factory " + factory.getName() + ".",
+                ActivityEntityType.PRODUCTION, created.getId(), created.getCode(),
+                ActionTrigger.CREATION);
+
+        return productionMapper.toResponse(created);
     }
 }

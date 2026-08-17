@@ -7,7 +7,11 @@ import org.springframework.stereotype.Component;
 import com.inaing.blackhorse_erp.module.supply.dto.request.SupplyCreationRequestDto;
 import com.inaing.blackhorse_erp.module.supply.dto.request.SupplyItemsUpdateRequestDto;
 import com.inaing.blackhorse_erp.module.supply.dto.request.SupplyStatusUpdateRequestDto;
+import com.inaing.blackhorse_erp.common.dto.list.PagedListWithAnalytics;
+import com.inaing.blackhorse_erp.module.supply.dto.request.SupplyQueryParams;
+import com.inaing.blackhorse_erp.module.supply.dto.response.SupplyListResponseDto;
 import com.inaing.blackhorse_erp.module.supply.dto.response.SupplyResponseDto;
+import com.inaing.blackhorse_erp.module.supply.dto.response.analytics.SupplyBasicAnalyticsDto;
 import com.inaing.blackhorse_erp.module.supply.usecase.ISupplyUsecases;
 import com.inaing.blackhorse_erp.module.supply.usecase.impl.usecases.CreateSupplyUsecase;
 import com.inaing.blackhorse_erp.module.supply.usecase.impl.usecases.GetAllSupplyUsecase;
@@ -38,8 +42,9 @@ public class SupplyUsecasesImpl implements ISupplyUsecases {
     }
 
     @Override
-    public List<SupplyResponseDto> getAll() {
-        return getAllSupplyUsecase.execute();
+    public PagedListWithAnalytics<SupplyBasicAnalyticsDto, SupplyListResponseDto> getAll(
+            SupplyQueryParams params) {
+        return getAllSupplyUsecase.execute(params);
     }
 
     @Override

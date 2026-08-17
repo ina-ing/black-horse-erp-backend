@@ -15,6 +15,11 @@ import com.inaing.blackhorse_erp.module.inventory.service.IInventoryService;
 import com.inaing.blackhorse_erp.module.product.domain.ProductVariantSize;
 import com.inaing.blackhorse_erp.module.product.service.IProductVariantSizeService;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -24,6 +29,7 @@ public class AdjustInventoryUsecase {
     private final IInventoryService inventoryService;
     private final IProductVariantSizeService productVariantSizeService;
     private final InventoryMapper inventoryMapper;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public InventoryResponseDto execute(InventoryAdjustmentRequestDto request) {
@@ -35,6 +41,13 @@ public class AdjustInventoryUsecase {
         }
 
         Inventory inventory = inventoryService.adjust(request.locationType(), request.referenceId(), quantities);
+        activityLogService.record(
+                ActivityAction.INVENTORY_ADJUSTED,
+                "Adjusted " + quantities.size() + " item(s) in " + request.locationType()
+                        + " inventory.",
+                ActivityEntityType.INVENTORY, inventory.getId(), null,
+                ActionTrigger.MANUAL);
+
         return inventoryMapper.toResponse(inventory);
     }
 }

@@ -17,6 +17,11 @@ import com.inaing.blackhorse_erp.module.inventory.domain.enums.LocationType;
 import com.inaing.blackhorse_erp.module.inventory.service.IInventoryService;
 import com.inaing.blackhorse_erp.module.role.domain.Role;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -28,6 +33,7 @@ public class CreateFactoryUsecase {
     private final IEmployeeService employeeService;
     private final IInventoryService inventoryService;
     private final IBacklogService productionBacklogService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public FactoryResponseDto execute(FactoryRequestDto request) {
@@ -44,6 +50,13 @@ public class CreateFactoryUsecase {
         productionBacklogService.create(createdFactory);
 
         inventoryService.createFor(LocationType.FACTORY, createdFactory.getId());
+        activityLogService.record(
+                ActivityAction.FACTORY_CREATED,
+                "Created factory " + createdFactory.getName() + " managed by "
+                        + manager.getFullname() + ".",
+                ActivityEntityType.FACTORY, createdFactory.getId(), createdFactory.getCode(),
+                ActionTrigger.CREATION);
+
         return factoryMapper.toResponse(createdFactory);
     }
 }

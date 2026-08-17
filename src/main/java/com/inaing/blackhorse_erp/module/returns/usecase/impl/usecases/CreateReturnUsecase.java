@@ -26,6 +26,10 @@ import com.inaing.blackhorse_erp.security.context.AuthPrincipal;
 import com.inaing.blackhorse_erp.security.context.CurrentUserProvider;
 import com.inaing.blackhorse_erp.utils.ItemsUtils;
 
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -38,6 +42,7 @@ public class CreateReturnUsecase {
     private final CurrentUserProvider currentUserProvider;
     private final IProductVariantSizeService variantSizeService;
     private final IReturnStatusHistoryService returnStatusHistoryService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public ReturnResponseDto execute(ReturnCreationRequestDto request) {
@@ -82,6 +87,13 @@ public class CreateReturnUsecase {
 
         Return created = returnService.create(ret);
         returnStatusHistoryService.record(created, status, ActionTrigger.CREATION, principal);
+
+        activityLogService.record(
+                ActivityAction.RETURN_CREATED,
+                "Requested return " + created.getCode() + " for retailer "
+                        + retailer.getStoreName() + ".",
+                ActivityEntityType.RETURN, created.getId(), created.getCode(),
+                ActionTrigger.CREATION);
 
         return returnMapper.toResponse(created);
     }

@@ -27,6 +27,11 @@ import com.inaing.blackhorse_erp.module.role.domain.Role;
 import com.inaing.blackhorse_erp.security.context.AuthPrincipal;
 import com.inaing.blackhorse_erp.security.context.CurrentUserProvider;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -37,6 +42,7 @@ public class UpdateReturnUsecase {
     private final IReturnService returnService;
     private final IProductVariantSizeService variantSizeService;
     private final CurrentUserProvider currentUserProvider;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public ReturnResponseDto execute(String id, ReturnUpdateRequestDto request) {
@@ -80,7 +86,15 @@ public class UpdateReturnUsecase {
             ret.setReason(ReturnReason.fromName(request.reason()));
         }
         ret.recalculateTotals();
-        return returnMapper.toResponse(returnService.update(ret));
+        Return updated = returnService.update(ret);
+
+        activityLogService.record(
+                ActivityAction.RETURN_UPDATED,
+                "Updated items on return " + updated.getCode() + ".",
+                ActivityEntityType.RETURN, updated.getId(), updated.getCode(),
+                ActionTrigger.MANUAL);
+
+        return returnMapper.toResponse(updated);
     }
 
     private List<ReturnItemRequestDto> dedupeItems(List<ReturnItemRequestDto> items) {

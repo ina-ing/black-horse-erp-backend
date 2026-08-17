@@ -28,12 +28,14 @@ public class InventoryController {
     private final IInventoryUsecases inventoryUsecases;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','SALES','WAREHOUSE','FACTORY')")
     public ApiResponse<InventoryResponseDto> getByLocation(@RequestParam LocationType locationType,
             @RequestParam String referenceId) {
         return ApiResponse.ok(inventoryUsecases.getByLocation(locationType, referenceId));
     }
 
     @GetMapping("/products")
+    @PreAuthorize("hasAnyRole('ADMIN','SALES','WAREHOUSE','FACTORY')")
     public ApiResponse<List<InventoryItemResponseDto>> getByLocationAndProduct(
             @RequestParam LocationType locationType,
             @RequestParam String referenceId,

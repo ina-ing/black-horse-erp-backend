@@ -19,6 +19,11 @@ import com.inaing.blackhorse_erp.module.warehouse.domain.Warehouse;
 import com.inaing.blackhorse_erp.module.warehouse.service.IWarehouseService;
 import com.inaing.blackhorse_erp.utils.ItemsUtils;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -30,6 +35,7 @@ public class CreateSupplyUsecase {
     private final IFactoryService factoryService;
     private final IWarehouseService warehouseService;
     private final IProductVariantSizeService productVariantSizeService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public SupplyResponseDto execute(SupplyCreationRequestDto request) {
@@ -56,6 +62,15 @@ public class CreateSupplyUsecase {
             supply.addItem(item);
         });
         supply.recalculateTotals();
-        return supplyMapper.toResponse(supplyService.create(supply));
+        Supply created = supplyService.create(supply);
+
+        activityLogService.record(
+                ActivityAction.SUPPLY_CREATED,
+                "Submitted supply " + created.getCode() + " from " + factory.getName()
+                        + " to " + warehouse.getName() + ".",
+                ActivityEntityType.SUPPLY, created.getId(), created.getCode(),
+                ActionTrigger.CREATION);
+
+        return supplyMapper.toResponse(created);
     }
 }

@@ -18,6 +18,11 @@ import com.inaing.blackhorse_erp.module.warehouse.domain.Warehouse;
 import com.inaing.blackhorse_erp.module.warehouse.service.IWarehouseService;
 import com.inaing.blackhorse_erp.utils.ItemsUtils;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -29,6 +34,7 @@ public class CreateProductionOrderUsecase {
     private final IProductVariantSizeService productVariantSizeService;
     private final ProductionOrderMapper productionOrderMapper;
     private final WarehouseAuthorizationService warehouseAuthorizationService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public ProductionOrderResponseDto execute(ProductionOrderCreationRequestDto request) {
@@ -52,6 +58,15 @@ public class CreateProductionOrderUsecase {
             order.addItem(item);
         });
         order.recalculateTotals();
-        return productionOrderMapper.toResponse(productionOrderService.create(order));
+        ProductionOrder created = productionOrderService.create(order);
+
+        activityLogService.record(
+                ActivityAction.PRODUCTION_ORDER_CREATED,
+                "Placed production order " + created.getCode() + " from warehouse "
+                        + warehouse.getName() + ".",
+                ActivityEntityType.PRODUCTION_ORDER, created.getId(), created.getCode(),
+                ActionTrigger.CREATION);
+
+        return productionOrderMapper.toResponse(created);
     }
 }

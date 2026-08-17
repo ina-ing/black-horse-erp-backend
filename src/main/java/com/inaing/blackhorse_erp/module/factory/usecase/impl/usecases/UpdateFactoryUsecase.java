@@ -11,6 +11,11 @@ import com.inaing.blackhorse_erp.module.factory.dto.response.FactoryResponseDto;
 import com.inaing.blackhorse_erp.module.factory.mapper.FactoryMapper;
 import com.inaing.blackhorse_erp.module.factory.service.IFactoryService;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -19,6 +24,7 @@ public class UpdateFactoryUsecase {
 
     private final FactoryMapper factoryMapper;
     private final IFactoryService factoryService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public FactoryResponseDto execute(String identifier, FactoryUpdateRequestDto request) {
@@ -29,6 +35,14 @@ public class UpdateFactoryUsecase {
 
         factoryMapper.updateEntity(request, factory);
 
-        return factoryMapper.toResponse(factoryService.update(factory));
+        Factory updated = factoryService.update(factory);
+
+        activityLogService.record(
+                ActivityAction.FACTORY_UPDATED,
+                "Updated factory " + updated.getName() + ".",
+                ActivityEntityType.FACTORY, updated.getId(), updated.getCode(),
+                ActionTrigger.MANUAL);
+
+        return factoryMapper.toResponse(updated);
     }
 }

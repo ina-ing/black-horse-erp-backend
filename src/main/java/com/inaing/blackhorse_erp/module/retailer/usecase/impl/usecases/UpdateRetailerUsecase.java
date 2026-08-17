@@ -14,6 +14,11 @@ import com.inaing.blackhorse_erp.module.retailer.mapper.RetailerMapper;
 import com.inaing.blackhorse_erp.module.retailer.service.IRetailerService;
 import com.inaing.blackhorse_erp.module.role.domain.Role;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -23,6 +28,7 @@ public class UpdateRetailerUsecase {
     private final IRetailerService retailerService;
     private final IEmployeeService employeeService;
     private final RetailerMapper retailerMapper;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public RetailerResponseDto execute(String identifier, RetailerUpdateRequestDto request) {
@@ -38,6 +44,8 @@ public class UpdateRetailerUsecase {
                     "Phone number already registered " + request.phone());
         }
 
+        Employee previousSalesman = retailer.getAssignedSalesman();
+
         if (request.assignedSalesman() != null) {
             Employee salesman = employeeService.getById(request.assignedSalesman());
             if (salesman == null || salesman.getRole() != Role.SALES) {
@@ -49,6 +57,23 @@ public class UpdateRetailerUsecase {
 
         retailerMapper.updateEntity(request, retailer);
 
-        return retailerMapper.toResponse(retailerService.update(retailer));
+        Retailer updated = retailerService.update(retailer);
+        boolean reassigned = previousSalesman != null
+                && updated.getAssignedSalesman() != null
+                && !previousSalesman.getId().equals(updated.getAssignedSalesman().getId());
+
+        activityLogService.record(
+                reassigned ? ActivityAction.RETAILER_SALESMAN_REASSIGNED
+                        : ActivityAction.RETAILER_UPDATED,
+                reassigned
+                        ? "Reassigned retailer " + updated.getStoreName() + " from "
+                                + previousSalesman.getFullname() + " to "
+                                + updated.getAssignedSalesman().getFullname() + "."
+                        : "Updated retailer " + updated.getStoreName() + " ("
+                                + updated.getCode() + ").",
+                ActivityEntityType.RETAILER, updated.getId(), updated.getCode(),
+                ActionTrigger.MANUAL);
+
+        return retailerMapper.toResponse(updated);
     }
 }

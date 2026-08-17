@@ -16,6 +16,11 @@ import com.inaing.blackhorse_erp.module.retailer.mapper.RetailerMapper;
 import com.inaing.blackhorse_erp.module.retailer.service.IRetailerService;
 import com.inaing.blackhorse_erp.module.role.domain.Role;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -27,6 +32,7 @@ public class CreateRetailerUsecase {
     private final IRetailerService retailerService;
     private final IInventoryService inventoryService;
     private final PasswordEncoder passwordEncoder;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public RetailerResponseDto execute(RetailerCreationRequestDto request) {
@@ -43,6 +49,13 @@ public class CreateRetailerUsecase {
 
         Retailer createdRetailer = retailerService.create(retailer);
         inventoryService.createFor(LocationType.RETAILER, createdRetailer.getId());
+
+        activityLogService.record(
+                ActivityAction.RETAILER_CREATED,
+                "Onboarded retailer " + createdRetailer.getStoreName() + " ("
+                        + createdRetailer.getCode() + ") under " + salesman.getFullname() + ".",
+                ActivityEntityType.RETAILER, createdRetailer.getId(), createdRetailer.getCode(),
+                ActionTrigger.CREATION);
 
         return retailerMapper.toResponse(createdRetailer);
     }

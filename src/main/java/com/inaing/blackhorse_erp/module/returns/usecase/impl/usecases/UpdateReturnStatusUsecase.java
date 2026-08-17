@@ -18,6 +18,10 @@ import com.inaing.blackhorse_erp.module.role.domain.Role;
 import com.inaing.blackhorse_erp.security.context.AuthPrincipal;
 import com.inaing.blackhorse_erp.security.context.CurrentUserProvider;
 
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -28,6 +32,7 @@ public class UpdateReturnStatusUsecase {
     private final IReturnService returnService;
     private final IReturnStatusHistoryService returnStatusHistoryService;
     private final CurrentUserProvider currentUserProvider;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public ReturnResponseDto execute(String id, ReturnStatusUpdateRequestDto request) {
@@ -45,7 +50,10 @@ public class UpdateReturnStatusUsecase {
         if (role == Role.ADMIN) {
             ret.setStatus(request.status());
             returnStatusHistoryService.record(ret, request.status(), ActionTrigger.MANUAL, principal);
-            return returnMapper.toResponse(returnService.update(ret));
+            Return saved = returnService.update(ret);
+            logStatusChange(saved, request.status());
+
+            return returnMapper.toResponse(saved);
         }
 
         switch (request.status()) {
@@ -58,7 +66,22 @@ public class UpdateReturnStatusUsecase {
                     "INVALID_STATUS_TRANSITION",
                     "This status cannot be set manually.");
         }
-        return returnMapper.toResponse(returnService.update(ret));
+        Return saved = returnService.update(ret);
+        logStatusChange(saved, request.status());
+
+        return returnMapper.toResponse(saved);
+    }
+
+    private void logStatusChange(Return ret, ReturnStatus status) {
+        activityLogService.record(
+                status == ReturnStatus.CANCELLED
+                        ? ActivityAction.RETURN_CANCELLED
+                        : ActivityAction.RETURN_STATUS_CHANGED,
+                "Return " + ret.getCode() + " moved to " + status + ".",
+                ActivityEntityType.RETURN, ret.getId(), ret.getCode(),
+                status == ReturnStatus.CANCELLED
+                        ? ActionTrigger.CANCELLATION
+                        : ActionTrigger.MANUAL);
     }
 
     private void approve(Return ret, Role role, AuthPrincipal principal) {

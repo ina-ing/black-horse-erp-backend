@@ -1,10 +1,16 @@
 package com.inaing.blackhorse_erp.module.employee.service.impl;
 
+import com.inaing.blackhorse_erp.module.employee.dto.projections.EmployeeStatusCountProjection;
+import com.inaing.blackhorse_erp.module.employee.dto.request.EmployeeFilter;
 import com.inaing.blackhorse_erp.module.employee.repository.EmployeeRepository;
+import com.inaing.blackhorse_erp.module.employee.repository.spec.EmployeeSpecifications;
 
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,4 +110,21 @@ public class EmployeeServiceImpl implements IEmployeeService {
         return employeeRepository.existsByRole(role);
     }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Employee> getEmployees(EmployeeFilter filter, Pageable pageable) {
+        Specification<Employee> spec = Specification.allOf(
+                EmployeeSpecifications.roleIn(filter.roles()),
+                EmployeeSpecifications.statusIs(filter.status()),
+                EmployeeSpecifications.matchesSearch(filter.search()));
+
+        return employeeRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EmployeeStatusCountProjection> getStatusCounts(List<Role> roles) {
+        return employeeRepository.findStatusCounts(roles);
+    }
 }

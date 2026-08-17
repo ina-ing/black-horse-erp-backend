@@ -26,6 +26,11 @@ import com.inaing.blackhorse_erp.module.role.domain.Role;
 import com.inaing.blackhorse_erp.security.context.AuthPrincipal;
 import com.inaing.blackhorse_erp.security.context.CurrentUserProvider;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -36,6 +41,7 @@ public class UpdateOrderUsecase {
     private final IOrderService orderService;
     private final OrderMapper orderMapper;
     private final IProductVariantSizeService variantSizeService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public OrderResponseDto execute(String identifier, OrderUpdateRequestDto request) {
@@ -79,7 +85,15 @@ public class UpdateOrderUsecase {
         }
         order.recalculateTotals();
 
-        return orderMapper.toResponse(orderService.update(order));
+        Order updated = orderService.update(order);
+
+        activityLogService.record(
+                ActivityAction.ORDER_UPDATED,
+                "Updated items on order " + updated.getCode() + ".",
+                ActivityEntityType.ORDER, updated.getId(), updated.getCode(),
+                ActionTrigger.MANUAL);
+
+        return orderMapper.toResponse(updated);
     }
 
     private List<OrderItemRequestDto> dedupeItems(List<OrderItemRequestDto> items) {

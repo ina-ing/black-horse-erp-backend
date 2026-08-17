@@ -5,7 +5,11 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.inaing.blackhorse_erp.module.production.dto.request.ProductionRequestDto;
+import com.inaing.blackhorse_erp.common.dto.list.PagedListWithAnalytics;
+import com.inaing.blackhorse_erp.module.production.dto.request.ProductionQueryParams;
+import com.inaing.blackhorse_erp.module.production.dto.response.ProductionListResponseDto;
 import com.inaing.blackhorse_erp.module.production.dto.response.ProductionResponseDto;
+import com.inaing.blackhorse_erp.module.production.dto.response.analytics.ProductionBasicAnalyticsDto;
 import com.inaing.blackhorse_erp.module.production.usecase.IProductionUsecases;
 import com.inaing.blackhorse_erp.module.production.usecase.impl.usecases.CreateProductionUsecase;
 import com.inaing.blackhorse_erp.module.production.usecase.impl.usecases.GetAllProductionUsecase;
@@ -36,8 +40,9 @@ public class ProductionUsecasesImpl implements IProductionUsecases {
     }
 
     @Override
-    public List<ProductionResponseDto> getAll() {
-        return getAllProductionUsecase.execute();
+    public PagedListWithAnalytics<ProductionBasicAnalyticsDto, ProductionListResponseDto> getAll(
+            ProductionQueryParams params) {
+        return getAllProductionUsecase.execute(params);
     }
 
     @Override

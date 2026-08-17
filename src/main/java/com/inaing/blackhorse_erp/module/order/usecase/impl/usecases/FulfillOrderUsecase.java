@@ -30,6 +30,10 @@ import com.inaing.blackhorse_erp.module.warehouse.service.IWarehouseService;
 import com.inaing.blackhorse_erp.security.context.AuthPrincipal;
 import com.inaing.blackhorse_erp.security.context.CurrentUserProvider;
 
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -42,6 +46,7 @@ public class FulfillOrderUsecase {
         private final IInventoryService inventoryService;
         private final IWarehouseService warehouseService;
         private final IOrderStatusHistoryService orderStatusHistoryService;
+    private final IActivityLogService activityLogService;
 
         @Transactional
         public OrderResponseDto execute(String identifier, OrderFulfillmentRequestDto request) {
@@ -118,6 +123,13 @@ public class FulfillOrderUsecase {
                 Order updated = orderService.update(order);
                 orderStatusHistoryService.record(updated, updated.getStatus(),
                                 ActionTrigger.FULFILLMENT, principal);
+
+                activityLogService.record(
+                                ActivityAction.ORDER_FULFILLED,
+                                "Fulfilled order " + updated.getCode() + " ("
+                                                + updated.getStatus() + ").",
+                                ActivityEntityType.ORDER, updated.getId(), updated.getCode(),
+                                ActionTrigger.FULFILLMENT);
 
                 return orderMapper.toResponse(updated);
         }

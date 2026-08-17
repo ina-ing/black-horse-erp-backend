@@ -21,6 +21,11 @@ import com.inaing.blackhorse_erp.module.supply.mapper.SupplyMapper;
 import com.inaing.blackhorse_erp.module.supply.service.ISupplyService;
 import com.inaing.blackhorse_erp.utils.ItemsUtils;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -30,6 +35,7 @@ public class UpdateSupplyItemsUsecase {
     private final SupplyMapper supplyMapper;
     private final ISupplyService supplyService;
     private final IProductVariantSizeService productVariantSizeService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public SupplyResponseDto execute(String identifier, SupplyItemsUpdateRequestDto request) {
@@ -66,6 +72,14 @@ public class UpdateSupplyItemsUsecase {
 
         supply.setStatus(SupplyStatus.PENDING);
         supply.recalculateTotals();
-        return supplyMapper.toResponse(supplyService.update(supply));
+        Supply updated = supplyService.update(supply);
+
+        activityLogService.record(
+                ActivityAction.SUPPLY_UPDATED,
+                "Updated items on supply " + updated.getCode() + ".",
+                ActivityEntityType.SUPPLY, updated.getId(), updated.getCode(),
+                ActionTrigger.MANUAL);
+
+        return supplyMapper.toResponse(updated);
     }
 }

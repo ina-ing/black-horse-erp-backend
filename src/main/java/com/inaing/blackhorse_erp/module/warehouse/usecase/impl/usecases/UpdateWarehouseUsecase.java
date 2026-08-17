@@ -11,6 +11,11 @@ import com.inaing.blackhorse_erp.module.warehouse.dto.response.WarehouseResponse
 import com.inaing.blackhorse_erp.module.warehouse.mapper.WarehouseMapper;
 import com.inaing.blackhorse_erp.module.warehouse.service.IWarehouseService;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -19,6 +24,7 @@ public class UpdateWarehouseUsecase {
 
     private final WarehouseMapper warehouseMapper;
     private final IWarehouseService warehouseService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public WarehouseResponseDto execute(String identifier, WarehouseUpdateRequestDto request) {
@@ -30,6 +36,14 @@ public class UpdateWarehouseUsecase {
 
         warehouseMapper.updateEntity(request, warehouse);
 
-        return warehouseMapper.toResponse(warehouseService.update(warehouse));
+        Warehouse updated = warehouseService.update(warehouse);
+
+        activityLogService.record(
+                ActivityAction.WAREHOUSE_UPDATED,
+                "Updated warehouse " + updated.getName() + ".",
+                ActivityEntityType.WAREHOUSE, updated.getId(), updated.getCode(),
+                ActionTrigger.MANUAL);
+
+        return warehouseMapper.toResponse(updated);
     }
 }

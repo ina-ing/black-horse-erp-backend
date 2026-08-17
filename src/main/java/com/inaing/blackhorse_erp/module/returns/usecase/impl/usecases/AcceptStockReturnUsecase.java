@@ -26,6 +26,10 @@ import com.inaing.blackhorse_erp.module.warehouse.service.IWarehouseService;
 import com.inaing.blackhorse_erp.security.context.AuthPrincipal;
 import com.inaing.blackhorse_erp.security.context.CurrentUserProvider;
 
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -38,6 +42,7 @@ public class AcceptStockReturnUsecase {
     private final CurrentUserProvider currentUserProvider;
     private final IWarehouseService warehouseService;
     private final IReturnStatusHistoryService returnStatusHistoryService;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public ReturnResponseDto execute(String id) {
@@ -70,7 +75,15 @@ public class AcceptStockReturnUsecase {
                 LocationType.RETAILER, ret.getRetailer().getId(),
                 LocationType.WAREHOUSE, warehouse.getId(),
                 quantities);
-        return returnMapper.toResponse(returnService.update(ret));
+        Return saved = returnService.update(ret);
+
+        activityLogService.record(
+                ActivityAction.RETURN_STOCK_ACCEPTED,
+                "Accepted returned stock from return " + saved.getCode() + " into inventory.",
+                ActivityEntityType.RETURN, saved.getId(), saved.getCode(),
+                ActionTrigger.MANUAL);
+
+        return returnMapper.toResponse(saved);
     }
 }
 

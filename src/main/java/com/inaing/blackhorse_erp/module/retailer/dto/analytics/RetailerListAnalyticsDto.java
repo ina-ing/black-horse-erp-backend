@@ -4,6 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record RetailerListAnalyticsDto(
-        Long totalRetailers, Long newRetailers) {
+        Long totalRetailers, Long newRetailers, Long provincesCovered) {
 
 }

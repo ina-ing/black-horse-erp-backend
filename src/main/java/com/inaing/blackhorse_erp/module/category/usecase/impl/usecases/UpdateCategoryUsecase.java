@@ -11,6 +11,11 @@ import com.inaing.blackhorse_erp.module.category.dto.CategoryResponseDto;
 import com.inaing.blackhorse_erp.module.category.mapper.CategoryMapper;
 import com.inaing.blackhorse_erp.module.category.service.ICategoryService;
 
+import com.inaing.blackhorse_erp.common.domain.enums.ActionTrigger;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityAction;
+import com.inaing.blackhorse_erp.module.activityLog.domain.enums.ActivityEntityType;
+import com.inaing.blackhorse_erp.module.activityLog.service.IActivityLogService;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -19,6 +24,7 @@ public class UpdateCategoryUsecase {
 
     private final ICategoryService categoryService;
     private final CategoryMapper categoryMapper;
+    private final IActivityLogService activityLogService;
 
     @Transactional
     public CategoryResponseDto execute(String identifier, CategoryRequestDto request) {
@@ -29,6 +35,14 @@ public class UpdateCategoryUsecase {
 
         categoryMapper.updateEntity(request, category);
 
-        return categoryMapper.toResponse(categoryService.update(category));
+        Category updated = categoryService.update(category);
+
+        activityLogService.record(
+                ActivityAction.CATEGORY_UPDATED,
+                "Renamed category to " + updated.getName() + ".",
+                ActivityEntityType.CATEGORY, updated.getId(), updated.getName(),
+                ActionTrigger.MANUAL);
+
+        return categoryMapper.toResponse(updated);
     }
 }
